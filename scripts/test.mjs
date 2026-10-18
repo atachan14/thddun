@@ -7,7 +7,7 @@ const tests = [
   'v02/creation-contract-test.mjs', 'v02/creation-cli-test.mjs',
   'v02/cli/content-contract-test.mjs', 'v02/auth/auth-test.mjs',
   'v02/auth/session-test.mjs', 'v02/auth/sdk-contract-test.mjs',
-  'v02/trial/application-test.mjs', 'v02/trial/node-handler-test.mjs',
+  'v02/trial/application-test.mjs', 'v02/trial/node-handler-test.mjs', 'v02/trial/deployment-host-test.mjs',
   'v02/ui/create-client-test.mjs', 'v02/ui/integration-test.mjs',
   'v02/ui/safety-test.mjs', 'v02/ui/sql-review-test.mjs', 'scripts/build-test.mjs'
 ];

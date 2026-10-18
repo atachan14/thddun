@@ -59,4 +59,4 @@ v0.2の検討ではdocsへの参照連携を優先し、リポジトリのTask�
 
 ライセンスはまだ設定していません。
 
-Git/Vercel verification build and Preview configuration: see [DEPLOYMENT.md](DEPLOYMENT.md).
+Git/Vercel main-only verification build and configuration: see [DEPLOYMENT.md](DEPLOYMENT.md).

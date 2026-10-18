@@ -1,8 +1,10 @@
-# Protected verification deployments
+# Protected main-only verification deployment
 
-This repository prepares one existing Vercel project for Git-based builds. Deployment,
-GitHub App linking and pushing are separate approval steps. No build runs a migration,
-seed, SQL probe or authentication/permission provisioning operation.
+Use one existing Vercel project, its protected Production deployment and existing
+Neon development DB/Auth. Publish reviewed changes to main. The temporary local
+migration branch is review preparation, not a required long-term branch workflow.
+Main publishing, Git connection and first deployment need separate authorization.
+No build runs SQL, seeds, provisioning or task/permission changes.
 
 ## Reproduce locally
 
@@ -14,80 +16,96 @@ pnpm test
 pnpm build
 ```
 
-On Windows without symlink privileges, installation can use
-`--node-linker=hoisted --store-dir node_modules/.pnpm-store` with the same frozen lockfile.
-The build writes only `public/` and `.build/`. It does not import the application,
-read environment credentials, open DB connections, generate seed SQL or change source.
-`public/` contains the authenticated shell, styles and dependency license notices.
-`.build/` contains an offline API bundle and input inventory for verification, and
-is not a deployment source entry. Vercel builds the committed `api/index.mjs`
-function from its source imports and installed dependencies.
+Windows without symlink privileges can add
+`--node-linker=hoisted --store-dir node_modules/.pnpm-store` at installation.
+Build reads source and installed dependencies, not credentials, and writes only
+public/ and .build/. It never imports the running app or opens a DB connection.
+Static text newlines are normalized. Public output contains the authenticated
+shell, styles and full third-party notices, without sourcemaps/fixtures/legacy
+file-ledger code. .build/ is an offline API test bundle and source-input inventory.
+Vercel builds committed api/index.mjs through normal Node source tracing.
+app-entry.mjs remains tracked for the local legacy server.
 
-The generated UI always enters the PostgreSQL API shell; it does not start the
-legacy local file-ledger client. `app-entry.mjs` remains included for local legacy
-server compatibility. The published baseline source and its fictional local model
-are retained; their runtime files and screenshots are excluded.
+## Exact host and callback contract
 
-## Vercel settings to review before connection
+The existing stable user entry is:
 
-- Existing single project; Framework Other, repository root, Node 24.x.
-- `vercel.json` specifies frozen dependency installation, build, public output,
-  one Node API entry, API rewrites and no-store/security headers.
-- Keep authentication protection for **all** deployments and keep custom-domain
-  publication off. No token, bypass key or GitHub Actions deployment secret is needed
-  for the native Git integration.
-- Review the function region against the existing Neon region. It is intentionally
-  not overridden here: earlier local configuration and actual deployment differed.
-- Connecting a repository can initiate a build. Configure Preview before connecting,
-  then approve the first deployment. Main should remain the Production branch.
-- Local tests do not prove Vercel's remote function tracing or protected OAuth flow;
-  verify these after the separately approved first Preview build.
+`https://thdmn-aklius14pg-8355s-projects.vercel.app`
 
-## Environment contract (names only)
+It is already assigned to this project and already trusted by existing Neon Auth.
+Start Google login there: the unchanged SDK callbackURL (location.href) returns to
+that same existing trusted origin. No new Google app/provider, credential or Auth
+origin is required for this route. The provider callback stays on existing Neon Auth.
 
-| Name | Purpose | Preview treatment |
-| --- | --- | --- |
-| `DATABASE_URL` | Server-side pooled Postgres connection | Securely bind to the existing Neon development verification DB after approval; never expose to the browser or build |
-| `NEON_AUTH_BASE_URL` | Neon Auth issuer/JWKS and browser SDK base URL | Configure for that same verification branch; the app deliberately returns this public URL to its browser |
-| `VERCEL_URL` | Exact deployment hostname used by the Node adapter | Vercel-provided system variable; verify availability, never hardcode a generated hostname |
-| `DATABASE_URL_UNPOOLED` | Existing direct connection setting | Current runtime does not read it; Preview build/runtime does not require a new direct connection setting |
+VERCEL_URL denotes the current immutable deployment hostname, which changes per
+build. The old immutable URL still identifies the old deployment, not future main
+updates. Use the stable alias routinely; unique deployment hosts are diagnostics.
 
-No `.env` example with values, credential export, environment pull or secret-bearing
-configuration is part of this repository. Vercel environment scope is separate from
-Neon branch identity. Current Vercel Production is a protected verification deployment,
-not evidence of a real-production database.
+The server accepts only the exact current deployment hostname and, in Production,
+the exact stable alias above. The stable alias requires VERCEL_ENV=production,
+VERCEL_PROJECT_ID=prj_52ZvN8FCsa7INgMKSDhh16dMLvyP and trusted system
+VERCEL_PROJECT_PRODUCTION_URL equal to that alias. VERCEL_URL must have this
+project's generated-name form; that pattern validates server configuration only.
+Requests must match the resulting exact strings. Other projects/teams, stale
+hosts, lookalike suffixes, ports and unknown hosts are rejected. Both the Node and
+Fetch boundaries check this rule. Forwarded/X-Forwarded headers never authorize
+hosts; absolute-form targets cannot override Host. Any supplied Origin must match
+the actual HTTPS request origin, including between the two accepted hosts.
+Missing/mismatched Production configuration fails closed. Preview cannot claim
+the Production alias. Non-Vercel mode accepts loopback/.invalid test configuration
+only; it cannot authorize real Vercel hosts.
 
-Initially, Preview and that existing Production-target verification deployment may
-both use the **same Neon development DB**, fixed `thdmn_v02_trial` schema, fictional
-seven-task fixture and existing human mapping. This shares task state, revisions,
-operations and audit records. First acceptance checks should be read-only. No new
-childAdder/editor grant is implied; existing seven tasks and permissions stay intact.
-Use a separate Neon branch before independent destructive, schema or write testing
-if preserving shared fixture state requires isolation. A second Vercel project is
-not required for either option.
+Verify automatic system identity/domain values before release and stable alias
+assignment after release. If the reported production domain differs, investigate;
+do not broaden trust or replace it with request-derived data.
 
-## Auth checks before Preview use
+## Existing environment contract (names only)
 
-Review the branch's enabled Google provider, trusted redirect origins, SDK callback
-URL, cookie/CORS behavior, issuer and audience, and current subject-to-principal
-mapping. Keep default-deny application permissions. The SDK redirects to the current
-URL; only explicitly reviewed Preview origins should be trusted. Do not assume the
-existing integration automatically synchronizes future Git Preview origins, and do
-not add a broad `*.vercel.app` trust rule. The API currently accepts only the exact
-`VERCEL_URL` host; test unique deployment URL and branch/project aliases separately.
-Vercel access protection and application Google authentication are both required.
+| Name | Handling |
+| --- | --- |
+| DATABASE_URL | Keep existing Production server secret targeting Neon development; no export, pull or print |
+| NEON_AUTH_BASE_URL | Keep existing Production public Auth base for the same branch |
+| DATABASE_URL_UNPOOLED | Keep existing setting; app/build does not read it |
+| VERCEL_URL | Automatic current deployment host |
+| VERCEL_PROJECT_PRODUCTION_URL | Automatic production domain, matching exact existing stable alias |
+| VERCEL_PROJECT_ID / VERCEL_ENV | Automatic project/environment identity |
 
-## Tests and publication scope
+No new Preview scope, DB branch, secret or Auth origin is proposed. Current
+Production is protected verification, with seven fictional tasks in fixed schema
+thdmn_v02_trial. It does not establish a real-production DB. Keep existing state,
+identities, mappings and grants. New create/edit code does not grant editor or
+childAdder rights to the stored user.
 
-Tests use synthetic signing keys, mocked fetch, fake Postgres and temporary local
-files/loopback servers. They cover policy/current authority, creation/content,
-revision conflicts, operation replay, session races, hidden-data projection, SQL
-workspace scoping and the Node request boundary. The auth crypto test excludes the
-old standalone preview page; the deployed shell is validated by build closure tests.
-Build tests run twice with outbound network APIs blocked, compare artifact hashes
-and source hashes, check secret sentinels and verify the compiled handler fails closed.
-They do not perform real Google login or live PostgreSQL create/edit.
+## Existing Vercel build and Git settings
 
-The exact source allowlist excludes operational evidence, identity-binding results,
-deployment/probe/seed scripts, SQL drafts, images, logs, generated bundles and secrets.
-Future source additions must be consciously added to `.gitignore`'s allowlist.
+- Reuse existing thdmn and GitHub App installation. No new project, PAT,
+  VERCEL_TOKEN, Actions deploy secret or proactive grant expansion.
+- Repository root; Framework Other; Node 24.x. vercel.json specifies frozen
+  install, build, public output, API rewrite, headers and 30-second function.
+- Pin hosted pnpm 11.25.0 through approved Corepack setup, for example nonsecret
+  ENABLE_EXPERIMENTAL_COREPACK=1 project configuration. Verify the hosted log
+  version; packageManager alone may not select it with install overrides.
+- Keep main as Production branch and Vercel Authentication for All Deployments.
+  Keep custom-domain publication off; no bypass key or protection weakening.
+- Keep existing Neon integration and last-known disabled auto-branch/delete
+  settings. No Preview setup, reinstall or resync is part of this migration.
+- Review source on main before connecting Git: connection may start a first
+  build. Do not unintentionally deploy the old legacy main source.
+- Region is not overridden; review existing project/Neon region separately.
+
+## Validation and release limits
+
+Tests use synthetic signing keys/fetch, fake PG and temporary files/loopback only.
+They cover create/edit/CLI, current authority, conflicts/replay, sessions, privacy,
+SQL workspace scoping and stable/foreign host/Origin/header spoofing. Build tests
+run twice with outbound JS network APIs blocked, compare artifact/source hashes,
+reject secret sentinels and exercise the compiled API host boundary/default deny.
+
+Vercel/Linux tracing, real Google login and live PG create/edit remain unverified.
+After main/Git/deployment approval, first verify protected Production readback and
+stable-URL Google login/read-only snapshot. Deployment approval grants no DB,
+migration, seed, task-write or permission-change authority.
+
+Operational records, identity bindings, seed/probe/deployment scripts, SQL drafts,
+images, logs, generated bundles and secrets are excluded by exact source allowlist.
+Review any future allowlist additions deliberately.

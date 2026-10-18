@@ -57,4 +57,16 @@ const res = response();
 await handler({ headers: { host: 'test.invalid' }, method: 'GET', url: '/api/v02/snapshot?workspace=demo' }, res);
 assert.equal(res.code, 503); // Missing environment fails closed, without connecting.
 assert(!res.body.includes('SENTINEL'));
+const stable = 'thdmn-aklius14pg-8355s-projects.vercel.app';
+const compiled = trialNodeHandler({ VERCEL: '1', VERCEL_ENV: 'production',
+  VERCEL_PROJECT_ID: 'prj_52ZvN8FCsa7INgMKSDhh16dMLvyP',
+  VERCEL_URL: 'thdmn-buildtest1-aklius14pg-8355s-projects.vercel.app',
+  VERCEL_PROJECT_PRODUCTION_URL: stable, NEON_AUTH_BASE_URL: 'https://auth.example.invalid/db/auth' });
+const stableResult = response();
+await compiled({ headers: { host: stable }, method: 'GET', url: '/api/v02/environment' }, stableResult);
+assert.equal(stableResult.code, 200);
+const spoofResult = response();
+await compiled({ headers: { host: 'other.invalid', 'x-forwarded-host': stable },
+  method: 'GET', url: '/api/v02/environment' }, spoofResult);
+assert.equal(spoofResult.code, 403);
 console.log('PASS reproducible build twice with outbound networking blocked; sources unchanged, secrets absent, source closure clean, licenses retained, compiled API fails closed.');

@@ -109,6 +109,8 @@
 !/v02/trial/identity-access.mjs
 !/v02/trial/node-handler-test.mjs
 !/v02/trial/node-handler.mjs
+!/v02/trial/deployment-hosts.mjs
+!/v02/trial/deployment-host-test.mjs
 !/v02/trial/scoped-pool.mjs
 !/v02/ui/authenticated-transport.mjs
 !/v02/ui/canvas-adapter.mjs
