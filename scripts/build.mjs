@@ -49,14 +49,15 @@ for (const directory of [output, reviewOutput]) {
   catch (error) { if (error.code !== 'ENOENT') throw error; }
   await fs.mkdir(directory, { recursive: true });
 }
-const html = (await fs.readFile(path.join(root, 'index.html'), 'utf8'));
+const normalizeText = text => text.replace(/\r\n?/g, '\n');
+const html = normalizeText(await fs.readFile(path.join(root, 'index.html'), 'utf8'));
 if (!html.includes('src="/app-entry.mjs"')) throw Error('Unexpected HTML entry');
 const artifacts = new Map([
   ['index.html', html.replace('src="/app-entry.mjs"', 'src="/shell.js"')],
   ['THIRD_PARTY_NOTICES.json', JSON.stringify([...packages.values()].sort((a, b) => a.name.localeCompare(b.name)), null, 2) + '\n']
 ]);
 for (const file of ['style.css', 'simple.css', 'menu-pane.css', 'site-layout.css']) {
-  artifacts.set(file, await fs.readFile(path.join(root, file)));
+  artifacts.set(file, normalizeText(await fs.readFile(path.join(root, file), 'utf8')));
 }
 for (const file of browser.outputFiles) artifacts.set(path.basename(file.path), file.contents);
 const allowed = [...artifacts.keys()].sort();
