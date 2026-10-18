@@ -1,0 +1,15 @@
+import{UserItems}from'./user-items.mjs';
+const labels={childAdders:'作成権限',editors:'修正権限',completers:'担当者'};
+export function childSettings({data,task,actor,revision,send,request}){
+ const d=document.createElement('dialog');d.className='child-settings';d.innerHTML='<h2>子の設定</h2><p>新しい子は親の現在のItemをコピーします。以下の追加Itemは新しい子と、その子が作る子孫にも引き継ぎます。既存子孫には追従しません。同じ項目・利用者がコピー元にあれば追加はせず、元のTierを保ちます。</p><details><summary>新しい子孫への追加Item</summary><div class="rules"></div></details><details><summary>既存子孫へ一括追加・削除</summary><p>対象は直下の子と全子孫です（このTaskは含みません）。</p><select class="field"></select><select class="person"></select><select class="action"><option value="add">追加</option><option value="remove">削除</option></select><input class="tier" value="10" aria-label="追加Tier"><label><input type="checkbox" class="done">完了済みも含める</label><button type="button" class="preview">影響を確認</button><p class="impact"></p><button type="button" class="apply" disabled>確認した対象へ適用</button></details><p class="err" role="alert"></p><div class="actions"><button type="button" class="close">閉じる</button><button type="button" class="save">新しい子の設定を保存</button></div>';
+ const q=s=>d.querySelector(s),pickers=new Map(),actorTier=task.policy.tiers.editors[actor];
+ for(const[field,name]of Object.entries(labels)){const o=new Option(name,field);q('.field').add(o);const block=document.createElement('details'),sum=document.createElement('summary'),list=document.createElement('div');sum.textContent=name;block.append(sum,list);q('.rules').append(block);const rules=(task.childRules||[]).filter(r=>r.field===field);pickers.set(field,new UserItems(list,{people:data.principals,selected:rules.map(r=>r.userId),tiers:Object.fromEntries(rules.map(r=>[r.userId,r.tier])),tiered:true,actorTier,defaultTier:id=>task.participants.find(p=>p.userId===id)?.tier||'10'}));}
+ data.principals.forEach(p=>q('.person').add(new Option(p.name,p.id)));let confirmed;
+ const command=()=>({type:'bulkItems',taskId:task.id,field:q('.field').value,userId:q('.person').value,action:q('.action').value,...(q('.action').value==='add'?{tier:q('.tier').value}:{}),includeDone:q('.done').checked});
+ const error=e=>q('.err').textContent=e.message;
+ d.querySelectorAll('select,input').forEach(e=>e.addEventListener('change',()=>{confirmed=null;q('.apply').disabled=true;}));
+ q('.preview').onclick=async()=>{q('.apply').disabled=true;confirmed=null;try{const c=command(),p=await request('/api/bulk/preview',{actorId:actor,expectedRevision:revision,command:c});q('.impact').textContent=`変更 ${p.affected.length}件・重複/対象なし ${p.noop.length}件・完了済み除外 ${p.excluded.length}件`;confirmed=c;q('.apply').disabled=false;q('.err').textContent='';}catch(e){error(e);}};
+ q('.apply').onclick=async()=>{if(!confirmed)return;try{q('.apply').disabled=true;await send(confirmed,revision);d.close();}catch(e){error(e);}};
+ q('.save').onclick=async()=>{try{const rules=[...pickers].flatMap(([field,p])=>p.items().map(i=>({field,...i})));await send({type:'setChildRules',taskId:task.id,rules},revision);d.close();}catch(e){error(e);}};
+ q('.close').onclick=()=>d.close();d.onclose=()=>d.remove();document.body.append(d);d.showModal();return d;
+}

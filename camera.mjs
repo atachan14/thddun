@@ -1,0 +1,16 @@
+export class GraphCamera{
+ constructor(viewport,world,onChange,onResize){
+  Object.assign(this,{viewport,world,onChange,onResize,enabled:false,state:{x:0,y:0,scale:1},drag:null,suppressUntil:0});
+  viewport.addEventListener('wheel',e=>{if(!this.enabled)return;e.preventDefault();const r=viewport.getBoundingClientRect(),delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?viewport.clientHeight:1);this.zoomAt(this.state.scale*Math.exp(-delta*.0015),e.clientX-r.left,e.clientY-r.top);},{passive:false});
+  viewport.addEventListener('pointerdown',e=>{if(!this.enabled||e.button!==0||e.target.closest('button,input,select,a,.task,.boundary-node,.dependency-line'))return;this.drag={id:e.pointerId,sx:e.clientX,sy:e.clientY,x:this.state.x,y:this.state.y,moved:false};});
+  viewport.addEventListener('pointermove',e=>{const d=this.drag;if(!d||d.id!==e.pointerId)return;if(!d.moved&&Math.hypot(e.clientX-d.sx,e.clientY-d.sy)<5)return;d.moved=true;this.autoFit=false;viewport.setPointerCapture(e.pointerId);viewport.classList.add('panning');e.preventDefault();this.state.x=d.x+e.clientX-d.sx;this.state.y=d.y+e.clientY-d.sy;this.apply();});
+  const end=e=>{if(!this.drag||this.drag.id!==e.pointerId)return;if(this.drag.moved)this.suppressUntil=performance.now()+250;if(viewport.hasPointerCapture(e.pointerId))viewport.releasePointerCapture(e.pointerId);this.drag=null;viewport.classList.remove('panning');};
+  viewport.addEventListener('pointerup',end);viewport.addEventListener('pointercancel',end);
+  viewport.addEventListener('click',e=>{if(performance.now()<this.suppressUntil){e.preventDefault();e.stopImmediatePropagation();}},true);
+  this.resizeObserver=new ResizeObserver(()=>{if(!this.enabled)return;const width=Math.max(900,viewport.clientWidth);if(!world.dataset.layered&&Math.abs(world.offsetWidth-width)>1)world.style.width=width+'px';onResize();});this.resizeObserver.observe(viewport);
+ }
+ setEnabled(enabled,saved){this.enabled=enabled;this.viewport.classList.toggle('camera-active',enabled);if(enabled){if(!this.world.dataset.layered)this.world.style.width=Math.max(900,this.viewport.clientWidth)+'px';if(saved&&[saved.x,saved.y,saved.scale].every(Number.isFinite))this.state={x:saved.x,y:saved.y,scale:Math.min(2.5,Math.max(.15,saved.scale))};this.apply(false);}else{this.world.style.transform='none';this.world.style.width='100%';}}
+ apply(notify=true){if(!this.enabled)return;const{x,y,scale}=this.state;this.world.style.transform=`translate(${x}px, ${y}px) scale(${scale})`;this.viewport.dataset.camera=JSON.stringify(this.state);if(notify)this.onChange({...this.state});}
+ zoomAt(scale,cx=this.viewport.clientWidth/2,cy=this.viewport.clientHeight/2){this.autoFit=false;scale=Math.min(2.5,Math.max(.15,scale));const old=this.state,wx=(cx-old.x)/old.scale,wy=(cy-old.y)/old.scale;this.state={x:cx-wx*scale,y:cy-wy*scale,scale};this.apply();}
+ fit({readable=false}={}){if(!this.enabled||!this.viewport.clientWidth||!this.viewport.clientHeight)return;this.autoFit=true;this.fitMode=readable?'readable':'all';const w=this.world.offsetWidth,h=this.world.offsetHeight,scale=Math.max(readable?.65:.15,Math.min(1,(this.viewport.clientWidth-24)/w,(this.viewport.clientHeight-24)/h));this.state={x:Math.max(12,(this.viewport.clientWidth-w*scale)/2),y:readable?12:(this.viewport.clientHeight-h*scale)/2,scale};this.apply();}
+}
