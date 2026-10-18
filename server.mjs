@@ -1,7 +1,7 @@
 import{previewBulk}from'./domain.mjs';
 import http from'node:http';import fs from'node:fs';import path from'node:path';import{fileURLToPath}from'node:url';import{LedgerStore}from'./ledger-store.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
-const files=new Set(['index.html','app.mjs','model.mjs','favorites.mjs','comparison.mjs','domain.mjs','tier.mjs','independent.mjs','relations.mjs','work-states.mjs','task-appearance.mjs','compact-form.mjs','suggestions.mjs','add-disclosure.mjs','relation-picker.mjs','child-settings.mjs','user-items.mjs','file-client.mjs','graph.mjs','layered-layout.mjs','routing.mjs','camera.mjs','menu-pane.mjs','style.css','simple.css','site-layout.css','menu-pane.css']);
+const files=new Set(['index.html','app-entry.mjs','app.mjs','model.mjs','favorites.mjs','comparison.mjs','domain.mjs','tier.mjs','independent.mjs','relations.mjs','work-states.mjs','task-appearance.mjs','compact-form.mjs','suggestions.mjs','add-disclosure.mjs','relation-picker.mjs','child-settings.mjs','user-items.mjs','file-client.mjs','graph.mjs','layered-layout.mjs','routing.mjs','camera.mjs','menu-pane.mjs','style.css','simple.css','site-layout.css','menu-pane.css']);
 export function createServer({dir=process.env.THDMN_DATA_DIR||path.join(root,'runtime','data')}={}){
  const store=new LedgerStore(dir),clients=new Set();
  const server=http.createServer(async(req,res)=>{

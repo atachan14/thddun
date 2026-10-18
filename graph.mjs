@@ -16,7 +16,7 @@ export class DependencyGraph{
   }
   update(data,view,collapsed){
     if(view.mode==='drilldown'&&view.graphLayoutVersion!==2){view.camera=null;view.graphLayoutVersion=2;}this.data=data;this.view=view;this.collapsed=collapsed;this.drill=view.mode==='drilldown';this.active=view.mode==='nested'||this.drill;this.canvas.classList.toggle('graph-active',this.active);this.overlay.style.display=this.active?'':'none';this.boundary.replaceChildren();
-    const byId=new Map(data.tasks.map(t=>[t.id,t]));this.byId=byId;this.inside=new Set();const visit=id=>{this.inside.add(id);data.tasks.filter(t=>t.parent===id).forEach(t=>visit(t.id));};if(byId.has(view.root))visit(view.root);
+    const byId=new Map(data.tasks.map(t=>[t.id,t]));this.byId=byId;this.inside=new Set();const visit=id=>{this.inside.add(id);data.tasks.filter(t=>t.parent===id).forEach(t=>visit(t.id));};if(view.root===null)for(const t of data.tasks)this.inside.add(t.id);else if(byId.has(view.root))visit(view.root);
     this.edges=data.tasks.flatMap(t=>t.deps.map(from=>({from,to:t.id}))).filter(e=>this.inside.has(e.from)||this.inside.has(e.to));
     if(this.focus&&!byId.has(this.focus))this.focus='';
     if(!this.drill){this.canvas.classList.remove('graph-layered');delete this.canvas.dataset.layered;this.canvas.style.height='';this.board.style.cssText='';for(const node of this.board.querySelectorAll('[data-task]'))node.style.cssText='';}

@@ -1,0 +1,3 @@
+import{sessionController}from'../auth/session-controller.mjs';
+// Same SDK factory and memory-only session used by the protected connection trial.
+export async function authenticatedTransport({authBaseUrl,onChange}){const{createAuthClient}=await import('@neondatabase/auth');const{BetterAuthVanillaAdapter}=await import('@neondatabase/auth/vanilla/adapters');const client=createAuthClient(authBaseUrl,{adapter:BetterAuthVanillaAdapter({fetchOptions:{credentials:'include'}}),allowAnonymous:false});const session=sessionController({client,onChange});return{session,login:()=>client.signIn.social({provider:'google',callbackURL:location.href}),fetchImpl:(path,options)=>session.protectedFetch(path,fetch,options)};}

@@ -58,3 +58,5 @@ localhost専用です。ローカル利用者の切替は認証ではなく、�
 v0.2の検討ではdocsへの参照連携を優先し、リポジトリのTask用フォルダからTaskを生成するGit取込は対象外としています。予定の機能を実装済みとは扱いません。
 
 ライセンスはまだ設定していません。
+
+Git/Vercel verification build and Preview configuration: see [DEPLOYMENT.md](DEPLOYMENT.md).
