@@ -27,14 +27,16 @@ export function validateStructure(model){
  // Preserve the existing child-completion cycle safeguard; no completion result is computed here.
  for(const t of model.tasks)if(t.parent.kind==='task')consumes.get(t.parent.id).add(t.id);
  for(const edge of model.dependencyEdges){
-  if(!edge||Object.keys(edge).some(k=>!['id','container','fromEntryId','toEntryId','prerequisiteTaskId','taskId'].includes(k))||!text(edge.fromEntryId)||!text(edge.toEntryId)||!text(edge.id)||edgeIds.has(edge.id)||!page(edge.container)||!all.has(key(edge.container)))fail();edgeIds.add(edge.id);
-  const entries=entriesForPage(model,edge.container),from=entries.find(x=>x.entryId===edge.fromEntryId),to=entries.find(x=>x.entryId===edge.toEntryId);
+  if(!edge||Object.keys(edge).some(k=>!['id','container','fromEntryId','toEntryId','prerequisiteTaskId','taskId'].includes(k))||!text(edge.id)||edgeIds.has(edge.id))fail();edgeIds.add(edge.id);
+  const registered=edge.container!==undefined||edge.fromEntryId!==undefined||edge.toEntryId!==undefined;
+  if(registered&&(!text(edge.fromEntryId)||!text(edge.toEntryId)||!page(edge.container)||!all.has(key(edge.container))))fail();
+  const entries=registered?entriesForPage(model,edge.container):[],from=entries.find(x=>x.entryId===edge.fromEntryId),to=entries.find(x=>x.entryId===edge.toEntryId);
   const canonical=edge.prerequisiteTaskId!==undefined||edge.taskId!==undefined;
   if(canonical){if(!tasks.has(edge.prerequisiteTaskId)||!tasks.has(edge.taskId)||edge.prerequisiteTaskId===edge.taskId)fail();if(from&&from.taskId!==edge.prerequisiteTaskId||to&&to.taskId!==edge.taskId)fail();}
   else if(!from||!to||from.taskId===to.taskId)fail();
   const source=canonical?edge.prerequisiteTaskId:from.taskId,target=canonical?edge.taskId:to.taskId;
   const entityPair=JSON.stringify([source,target]);if(entityPairs.has(entityPair))throw new StructureError(409,'Dependency already exists');entityPairs.add(entityPair);
-  const pair=JSON.stringify([key(edge.container),edge.fromEntryId,edge.toEntryId]);if(pairs.has(pair))fail();pairs.add(pair);
+  if(registered){const pair=JSON.stringify([key(edge.container),edge.fromEntryId,edge.toEntryId]);if(pairs.has(pair))fail();pairs.add(pair);}
   consumes.get(target).add(source);
  }
  const visiting=new Set(),done=new Set();function visit(id){if(visiting.has(id))fail();if(done.has(id))return;visiting.add(id);for(const dep of consumes.get(id))visit(dep);visiting.delete(id);done.add(id);}for(const t of model.tasks)visit(t.id);
@@ -64,7 +66,7 @@ export function entriesForPage(model,target){return[
  ...model.tasks.filter(t=>samePage(t.parent,target)).map(t=>({entryId:'task:'+t.id,kind:'task',taskId:t.id,title:t.title,target:{kind:'task',id:t.id}})),
  ...model.references.filter(r=>samePage(r.container,target)).map(r=>({entryId:'reference:'+r.id,kind:'reference',referenceId:r.id,taskId:r.taskId,title:model.tasks.find(t=>t.id===r.taskId).title,target:{kind:'task',id:r.taskId}}))
 ];}
-export function effectiveDependencies(model){return model.dependencyEdges.map(e=>{const entries=entriesForPage(model,e.container);return{id:e.id,prerequisiteTaskId:e.prerequisiteTaskId??entries.find(x=>x.entryId===e.fromEntryId).taskId,taskId:e.taskId??entries.find(x=>x.entryId===e.toEntryId).taskId};});}
+export function effectiveDependencies(model){return model.dependencyEdges.map(e=>{const entries=e.container?entriesForPage(model,e.container):[];return{id:e.id,prerequisiteTaskId:e.prerequisiteTaskId??entries.find(x=>x.entryId===e.fromEntryId).taskId,taskId:e.taskId??entries.find(x=>x.entryId===e.toEntryId).taskId};});}
 export function calculateCompletion(model){validateStructure(model);return deriveCompletion(model,effectiveDependencies(model));}
 export function resolveDependencyProposal(model,context,edge,access){
  if(!edge||Object.keys(edge).some(k=>!['id','container','fromEntryId','toEntryId'].includes(k))||!text(edge.id)||!page(edge.container))throw new StructureError(400,'Invalid dependency');

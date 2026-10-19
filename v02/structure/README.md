@@ -87,3 +87,11 @@ completion/reopen after prerequisite changes; browser checks cover reference
 removal retaining hold, explicit unlink changing completion, re-add returning to
 hold, and hidden-name suppression. No real DB, Google login or deployment was
 used to verify this isolated prototype.
+
+## Next local preparation
+
+The unmounted `db/` directory now contains additive migration/backfill SQL,
+current-principal/read/editor/Tier checks, and independent local PostgreSQL tests.
+See [db/README.md](db/README.md) for the exact connection status and approval gates.
+The browser preview above remains memory-only; neither production nor real DB
+has been switched to this adapter.

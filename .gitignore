@@ -163,3 +163,21 @@
 !/DEPLOYMENT.md
 
 !/v02/structure/lifetime-test.mjs
+
+# Reviewed additive structure preparation (no data or engine artifacts).
+!/v02/structure/db/
+/v02/structure/db/*
+!/v02/structure/db/001-additive.sql
+!/v02/structure/db/002-backfill.sql
+!/v02/structure/db/postcheck.sql
+!/v02/structure/db/legacy-fixture.sql
+!/v02/structure/db/repository.mjs
+!/v02/structure/db/api.mjs
+!/v02/structure/db/test-support.mjs
+!/v02/structure/db/migration-test.mjs
+!/v02/structure/db/api-test.mjs
+!/v02/structure/db/README.md
+!/v02/structure/db/check-preservation.mjs
+!/v02/structure/db/install-test-engine.mjs
+!/v02/structure/db/test.mjs
+!/v02/structure/db/preflight.mjs
