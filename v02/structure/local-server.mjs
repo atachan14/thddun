@@ -4,7 +4,7 @@ import http from'node:http';import fs from'node:fs/promises';
 import{createStructureApi}from'./api.mjs';import{structureSample}from'./sample.mjs';
 const port=Number(process.argv[2]||8768);if(!Number.isInteger(port)||port<1024||port>65535)throw Error('Invalid preview port');
 const store=new StructureMemoryStore(structureSample());
-const api=createStructureApi({authenticate:async()=>({subjectId:'synthetic-preview',csrfVerified:true}),loadModel:async()=>store.snapshot(),canReadPage:()=>true,canReadTask:()=>true,canEditTask:(_,id)=>['personal','build'].includes(id),canShareDependency:()=>true,execute:(...args)=>store.execute(...args)});
+const api=createStructureApi({authenticate:async()=>({subjectId:'synthetic-preview',csrfVerified:true}),loadModel:async()=>store.snapshot(),canReadPage:()=>true,canReadTask:(_,id)=>!process.argv.includes('--private')||id!=='brief',canEditTask:(_,id)=>['personal','build'].includes(id),canShareDependency:()=>true,canRemoveReference:()=>true,execute:(...args)=>store.execute(...args)});
 const files=new Map([['/','preview.html'],['/preview.html','preview.html'],['/browser.mjs','browser.mjs']]);
 http.createServer(async(req,res)=>{try{
  if(req.headers.host!=='127.0.0.1:'+port){res.writeHead(403).end();return;}

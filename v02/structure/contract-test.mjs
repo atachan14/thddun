@@ -15,7 +15,7 @@ const referencePair=structureSample();referencePair.dependencyEdges=[];reference
 assert.throws(()=>inspectDependencyProposal(original,context,{id:'parallel-placement',container:account,fromEntryId:'reference:second-shortcut',toEntryId:'task:personal'},access),e=>e.status===409);
 const hidden={canReadPage:(_,p)=>p.kind!=='group',canReadTask:(_,id)=>id!=='build'};
 const filtered=projectPage(original,context,account,hidden);assert(!JSON.stringify(filtered).includes('build'));assert(!JSON.stringify(filtered).includes('cross-parent-work'));assert.equal(roots(original,context,hidden).length,1);
-const altered=structureSample();altered.tasks.find(t=>t.id==='build').title='非公開の別名';altered.dependencyEdges=altered.dependencyEdges.filter(x=>x.id!=='cross-parent-work');validateStructure(altered);assert.deepEqual(projectPage(altered,context,account,hidden),filtered); // Hidden edge existence/title does not change visible projection.
+const altered=structureSample();altered.tasks.find(t=>t.id==='build').title='非公開の別名';validateStructure(altered);assert.deepEqual(projectPage(altered,context,account,hidden),filtered); // Hidden names/details do not change visible projection; waiting itself is approved disclosure.
 assert.equal(projectPage(original,context,{kind:'task',id:'brief'},hidden).breadcrumbBoundary,true);
 for(const fromEntryId of ['reference:personal-shortcut','reference:nonexistent'])assert.throws(()=>inspectDependencyProposal(original,context,{id:'not-readable',container:account,fromEntryId,toEntryId:'task:personal'},hidden),e=>e.status===404&&e.message==='Not found');
 assert.equal(roots(original,context,{canReadPage:async()=>true}).length,0);

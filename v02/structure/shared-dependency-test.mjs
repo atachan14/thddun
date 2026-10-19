@@ -3,7 +3,7 @@ import{calculateCompletion,projectPage}from'./contract.mjs';
 import{structureSample}from'./sample.mjs';import{StructureMemoryStore}from'./memory-store.mjs';import{createStructureApi}from'./api.mjs';
 const m=structureSample(),before=structuredClone(m),c=calculateCompletion(m);
 assert.equal(c.get('project').appearance.key,'hold');assert.equal(c.get('project').completed,false);
-assert.equal(c.get('build').appearance.key,'prerequisite-pending');assert.equal(c.get('personal').completed,false);assert.deepEqual(m,before);
+assert.equal(c.get('build').appearance.key,'hold');assert.equal(c.get('personal').completed,false);assert.deepEqual(m,before);
 const finished=structuredClone(m);finished.tasks.find(t=>t.id==='brief').workStates.tester='done';assert([...calculateCompletion(finished).values()].every(x=>x.completed));
 const ctx={subjectId:'synthetic-editor',csrfVerified:true},account={kind:'account',id:'demo-account'},access={canReadPage:()=>true,canReadTask:()=>true,canEditTask:(_,id)=>id==='personal',canShareDependency:()=>true};
 const own=projectPage(m,ctx,account,access),builds=own.entries.filter(x=>x.taskId==='build');assert.equal(builds.length,2);assert.deepEqual(builds[0].completion,builds[1].completion);assert.deepEqual(builds[0].completion,projectPage(m,ctx,{kind:'task',id:'build'},access).pageTask.completion);

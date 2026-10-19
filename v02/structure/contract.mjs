@@ -1,5 +1,5 @@
 import{deriveCompletion}from'./completion.mjs';
-// Isolated structural contract. No ownership, permission inheritance or deletion rules.
+// Isolated synthetic contract. No ownership or permission inheritance.
 export class StructureError extends Error { constructor(status,message){super(message);this.status=status;} }
 const fail=()=>{throw new StructureError(400,'Invalid structure');};
 const kinds=['account','group','task'];
@@ -27,13 +27,15 @@ export function validateStructure(model){
  // Preserve the existing child-completion cycle safeguard; no completion result is computed here.
  for(const t of model.tasks)if(t.parent.kind==='task')consumes.get(t.parent.id).add(t.id);
  for(const edge of model.dependencyEdges){
-  if(!edge||Object.keys(edge).some(k=>!['id','container','fromEntryId','toEntryId','prerequisiteTaskId','taskId'].includes(k))||!text(edge.id)||edgeIds.has(edge.id)||!page(edge.container)||!all.has(key(edge.container)))fail();edgeIds.add(edge.id);
+  if(!edge||Object.keys(edge).some(k=>!['id','container','fromEntryId','toEntryId','prerequisiteTaskId','taskId'].includes(k))||!text(edge.fromEntryId)||!text(edge.toEntryId)||!text(edge.id)||edgeIds.has(edge.id)||!page(edge.container)||!all.has(key(edge.container)))fail();edgeIds.add(edge.id);
   const entries=entriesForPage(model,edge.container),from=entries.find(x=>x.entryId===edge.fromEntryId),to=entries.find(x=>x.entryId===edge.toEntryId);
-  if(!from||!to||from.taskId===to.taskId)fail();
-  if(edge.prerequisiteTaskId!==undefined&&edge.prerequisiteTaskId!==from.taskId||edge.taskId!==undefined&&edge.taskId!==to.taskId)fail();
-  const entityPair=JSON.stringify([from.taskId,to.taskId]);if(entityPairs.has(entityPair))throw new StructureError(409,'Dependency already exists');entityPairs.add(entityPair);
+  const canonical=edge.prerequisiteTaskId!==undefined||edge.taskId!==undefined;
+  if(canonical){if(!tasks.has(edge.prerequisiteTaskId)||!tasks.has(edge.taskId)||edge.prerequisiteTaskId===edge.taskId)fail();if(from&&from.taskId!==edge.prerequisiteTaskId||to&&to.taskId!==edge.taskId)fail();}
+  else if(!from||!to||from.taskId===to.taskId)fail();
+  const source=canonical?edge.prerequisiteTaskId:from.taskId,target=canonical?edge.taskId:to.taskId;
+  const entityPair=JSON.stringify([source,target]);if(entityPairs.has(entityPair))throw new StructureError(409,'Dependency already exists');entityPairs.add(entityPair);
   const pair=JSON.stringify([key(edge.container),edge.fromEntryId,edge.toEntryId]);if(pairs.has(pair))fail();pairs.add(pair);
-  consumes.get(to.taskId).add(from.taskId);
+  consumes.get(target).add(source);
  }
  const visiting=new Set(),done=new Set();function visit(id){if(visiting.has(id))fail();if(done.has(id))return;visiting.add(id);for(const dep of consumes.get(id))visit(dep);visiting.delete(id);done.add(id);}for(const t of model.tasks)visit(t.id);
  return model;
@@ -49,10 +51,12 @@ export function projectPage(model,context,target,access){
  const breadcrumb=[];let boundary=false;
  for(let p=target;p;){if(!readable(p)){boundary=true;break;}const x=find(p);breadcrumb.unshift({...p,title:x.title});p=p.kind==='task'?x.parent:null;}
  const visible=model.tasks.filter(t=>readable({kind:'task',id:t.id})),visibleIds=new Set(visible.map(t=>t.id));
- const dependencies=effectiveDependencies(model),allVisible=model.tasks.every(t=>readable({kind:'task',id:t.id}))&&roots(model,context,access).length===model.accounts.length+model.groups.length;
- const computed=allVisible?deriveCompletion(model,dependencies):null;
- const describe=id=>({completion:computed?.get(id)||{disclosed:false},effectivePrerequisites:dependencies.filter(e=>e.taskId===id&&visibleIds.has(e.prerequisiteTaskId)).map(e=>({taskId:e.prerequisiteTaskId,title:model.tasks.find(t=>t.id===e.prerequisiteTaskId).title})),canEdit:access.canEditTask?.(context,id)===true});
- const entries=entriesForPage(model,target).filter(x=>visibleIds.has(x.taskId)).map(x=>({...x,...describe(x.taskId)})),entryIds=new Set(entries.map(x=>x.entryId));
+ const dependencies=effectiveDependencies(model),computed=deriveCompletion(model,dependencies);
+ const describe=id=>{const c=computed.get(id),incoming=dependencies.filter(e=>e.taskId===id),hiddenPending=incoming.some(e=>!visibleIds.has(e.prerequisiteTaskId)&&!computed.get(e.prerequisiteTaskId).completed);
+  // Hidden prerequisite identities, counts, origin placements and internal state never leave this projection.
+  const completion={disclosed:true,completed:c.completed,appearance:{key:c.appearance.key,label:hiddenPending?'前提待ち':c.appearance.label}};
+  return{completion,effectivePrerequisites:incoming.filter(e=>visibleIds.has(e.prerequisiteTaskId)).map(e=>({id:e.id,taskId:e.prerequisiteTaskId,title:model.tasks.find(t=>t.id===e.prerequisiteTaskId).title,canRemove:access.canEditTask?.(context,id)===true})),canEdit:access.canEditTask?.(context,id)===true};};
+ const entries=entriesForPage(model,target).filter(x=>visibleIds.has(x.taskId)).map(x=>({...x,...describe(x.taskId),canRemoveReference:x.kind==='reference'&&access.canRemoveReference?.(context,x.referenceId)===true})),entryIds=new Set(entries.map(x=>x.entryId));
  return{revision:model.revision||0,page:{...target,title:item.title},breadcrumbs:breadcrumb,breadcrumbBoundary:boundary,entries,prerequisites:model.dependencyEdges.filter(e=>samePage(e.container,target)&&entryIds.has(e.fromEntryId)&&entryIds.has(e.toEntryId)).map(e=>({id:e.id,fromEntryId:e.fromEntryId,toEntryId:e.toEntryId})),pageTask:target.kind==='task'?describe(target.id):null,completionSemantics:'shared-entity'};
 }
 // Placement endpoints resolve to real Task IDs only for safety checks; references do not reparent.
@@ -60,7 +64,7 @@ export function entriesForPage(model,target){return[
  ...model.tasks.filter(t=>samePage(t.parent,target)).map(t=>({entryId:'task:'+t.id,kind:'task',taskId:t.id,title:t.title,target:{kind:'task',id:t.id}})),
  ...model.references.filter(r=>samePage(r.container,target)).map(r=>({entryId:'reference:'+r.id,kind:'reference',referenceId:r.id,taskId:r.taskId,title:model.tasks.find(t=>t.id===r.taskId).title,target:{kind:'task',id:r.taskId}}))
 ];}
-export function effectiveDependencies(model){return model.dependencyEdges.map(e=>{const entries=entriesForPage(model,e.container);return{id:e.id,prerequisiteTaskId:entries.find(x=>x.entryId===e.fromEntryId).taskId,taskId:entries.find(x=>x.entryId===e.toEntryId).taskId};});}
+export function effectiveDependencies(model){return model.dependencyEdges.map(e=>{const entries=entriesForPage(model,e.container);return{id:e.id,prerequisiteTaskId:e.prerequisiteTaskId??entries.find(x=>x.entryId===e.fromEntryId).taskId,taskId:e.taskId??entries.find(x=>x.entryId===e.toEntryId).taskId};});}
 export function calculateCompletion(model){validateStructure(model);return deriveCompletion(model,effectiveDependencies(model));}
 export function resolveDependencyProposal(model,context,edge,access){
  if(!edge||Object.keys(edge).some(k=>!['id','container','fromEntryId','toEntryId'].includes(k))||!text(edge.id)||!page(edge.container))throw new StructureError(400,'Invalid dependency');
