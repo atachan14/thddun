@@ -186,3 +186,15 @@
 !/v02/ui/structure-shell.mjs
 !/v02/structure/db/release-test.mjs
 !/v02/structure/db/release-server.mjs
+
+# Local-only public demo preparation; no private fixture or DB assets.
+!/v02/public-demo/
+/v02/public-demo/*
+!/v02/public-demo/sample.mjs
+!/v02/public-demo/model.mjs
+!/v02/public-demo/browser.mjs
+!/v02/public-demo/index.html
+!/v02/public-demo/demo.css
+!/v02/public-demo/local-server.mjs
+!/v02/public-demo/test.mjs
+!/v02/public-demo/README.md
