@@ -1,10 +1,14 @@
-# Additive DB/API preparation — not activated
+# Typed structure DB/API implementation
 
-Base commit: 5e59fdf. No deployment route imports these modules. Nothing here
-opens a database driver, loads DATABASE_URL, changes authentication, applies a
-remote migration, issues credentials or pushes Git. The original browser preview
-still uses its memory store. The optional independent SQL preview below now
-connects the same browser renderer to this local DB API; production is unchanged.
+The production application mounts the authenticated read-only page API and uses
+server-derived completion in existing Task snapshots. Task creation writes the
+legacy Task and typed parent atomically. Reference/Page/dependency management
+commands remain disabled in production. The existing Google transport and rights
+are reused; no credentials, identity mappings or grants are added by this code.
+
+Migration files are never executed by build/startup. Apply them only through the
+separately reviewed maintenance procedure. The original synthetic preview and
+optional local SQL previews remain isolated from the real database.
 
 ## Deliverables and connection status
 
@@ -22,7 +26,7 @@ connects the same browser renderer to this local DB API; production is unchanged
 - `repository.mjs`: pool-injected PostgreSQL implementation for page reads,
   reference add/remove and shared prerequisite add/unlink. It reuses existing
   current-principal authorization, task_read_spaces/memberships and B editors.
-- `api.mjs`: unmounted Fetch API factory. Authentication, allowed origins, verified
+- `api.mjs`: authenticated Fetch API factory (production reads only). Authentication, allowed origins, verified
   CSRF and workspace read/write scopes must be supplied. Actor spoofing is rejected.
 - `preflight.mjs`: read-only baseline count/fingerprint capture through an injected
   client; requires an explicit reviewed Task count. No row values are returned.
@@ -139,9 +143,8 @@ Before remote application, separately approve all of these concrete scopes:
    deployment protection and credentials are unchanged by this preparation.
 
 Ownership transfer, real parent moves, Task/Page deletion and deletion cascades are
-still out of scope. No endpoint or migration chooses their semantics. The root
-manifest and placement rights are the short open questions needed for activation;
-this local preparation can be reviewed without answering them yet.
+still out of scope. No endpoint or migration chooses their semantics. Real root mappings require an explicit reviewed manifest; placement-management
+rights remain deliberately unbound while that feature is deferred.
 
 ## Independent local SQL browser preview
 
@@ -160,3 +163,17 @@ This validates browser -> Fetch API -> SQL transaction -> projected response,
 without remote DB or new credentials. The one embedded engine serializes local
 transactions; real multi-connection contention is still a later integration test.
 The database is discarded when the process stops.
+
+## Read-only production integration
+
+The approved first release exposes typed pages and retained references through
+the existing authenticated application. `/api/v02/structure/commands` returns405
+even for authenticated users. `structure-shell.mjs` disables all new management
+controls, and links a Task to the existing content/state editor. Existing snapshot
+reads include authoritative completion labels with hidden prerequisites redacted.
+Existing createTask saves structure_parents in the same transaction; a failed
+parent insert rolls back Task/Policy/operation/audit together. Confirmed private
+prerequisites no longer invalidate unrelated child creation in structure mode;
+read checks and Tier checks on newly selected dependencies remain in force.
+`release-test.mjs` exercises the production application factory against actual
+local PostgreSQL, including child edit/readback, management405 and atomic rollback.

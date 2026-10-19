@@ -1,5 +1,5 @@
 import{deriveCompletion}from'./completion.mjs';
-// Isolated synthetic contract. No ownership or permission inheritance.
+// Typed structure contract. No ownership or permission inheritance.
 export class StructureError extends Error { constructor(status,message){super(message);this.status=status;} }
 const fail=()=>{throw new StructureError(400,'Invalid structure');};
 const kinds=['account','group','task'];

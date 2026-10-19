@@ -1,7 +1,9 @@
 # Shared entity dependencies: isolated synthetic implementation
 
-The API/UI in this directory is not mounted in production. It uses an explicit
-synthetic identity and process-local memory, never a real database or credentials.
+The typed contract/browser renderer is shared by the authenticated read-only
+production page view. The standalone local-server described below still uses an
+explicit synthetic identity and process-local memory. Production management is
+disabled; see db/README.md for the read-only integration and migration procedure.
 
 Run `node v02/structure/local-server.mjs` and open http://127.0.0.1:8768/ .
 For a synthetic reader without access to the brief prerequisite, run
@@ -58,7 +60,7 @@ binds it true for synthetic data only. It does not grant or define live roles.
 Reference-removal permission also uses an explicit synthetic binding; production
 must bind it to the existing placement-management policy, without adding grants.
 
-## Migration plan: not executed
+## Reviewed migration procedure
 
 1. Review the existing schema and approved rights without altering live data.
    Separate entity dependency storage from reference placement storage. Keep the
@@ -90,8 +92,8 @@ used to verify this isolated prototype.
 
 ## Next local preparation
 
-The unmounted `db/` directory now contains additive migration/backfill SQL,
+The `db/` directory contains additive migration/backfill SQL,
 current-principal/read/editor/Tier checks, and independent local PostgreSQL tests.
 See [db/README.md](db/README.md) for the exact connection status and approval gates.
-The browser preview above remains memory-only; neither production nor real DB
-has been switched to this adapter.
+The standalone preview above remains memory-only. Production uses the DB adapter
+for authenticated read-only pages and keeps new management operations disabled.

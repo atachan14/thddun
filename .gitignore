@@ -183,3 +183,6 @@
 !/v02/structure/db/preflight.mjs
 !/v02/structure/db/local-server.mjs
 !/v02/structure/db/local-preview.html
+!/v02/ui/structure-shell.mjs
+!/v02/structure/db/release-test.mjs
+!/v02/structure/db/release-server.mjs

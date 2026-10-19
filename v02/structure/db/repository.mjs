@@ -1,10 +1,10 @@
 import{createHash}from'node:crypto';
-import{loadWorkspace}from'../../postgres-repository.mjs';import{transaction}from'../../postgres-uow.mjs';import{authorizeCurrentPrincipal}from'../../principal-authorization.mjs';import{canRead,ApiError}from'../../domain-draft.mjs';import{scope}from'../../command-contract.mjs';import{canonicalTier,checkItemChange}from'../../../tier.mjs';
+import{loadWorkspace}from'../../postgres-repository.mjs';import{transaction}from'../../postgres-uow.mjs';import{authorizeCurrentPrincipal}from'../../principal-authorization.mjs';import{canRead,ApiError,visibleSnapshot}from'../../domain-draft.mjs';import{scope}from'../../command-contract.mjs';import{canonicalTier,checkItemChange}from'../../../tier.mjs';
 import{StructureError,validateStructure,roots,projectPage,resolveDependencyProposal}from'../contract.mjs';import{StructureMemoryStore}from'../memory-store.mjs';
 export const legacyDependencyId=(workspace,target,source)=>'dependency:'+createHash('sha256').update(JSON.stringify([workspace,target,source])).digest('hex');
-export async function loadStructure(client,workspaceId){
+export async function loadStructure(client,workspaceId,existingData){
  const ready=await client.query("SELECT version FROM structure_migrations WHERE version='002-structure-backfill'");if(!ready.rows.length)throw new ApiError(503,'Structure unavailable');
- const data=await loadWorkspace(client,workspaceId),rows=async sql=>(await client.query(sql,[workspaceId])).rows;
+ const data=existingData||await loadWorkspace(client,workspaceId),rows=async sql=>(await client.query(sql,[workspaceId])).rows;
  const pages=await rows('SELECT p.page_kind,p.page_id,s.name FROM structure_pages p JOIN spaces s ON s.id=p.page_id AND s.workspace_id=p.workspace_id AND s.kind=p.page_kind WHERE p.workspace_id=$1');
  const parents=await rows('SELECT task_id,parent_kind,parent_page_id,parent_task_id FROM structure_parents WHERE workspace_id=$1');
  const refs=await rows('SELECT id,task_id,container_kind,container_page_id,container_task_id FROM structure_references WHERE workspace_id=$1');
@@ -27,7 +27,7 @@ export function structureCommand(input){
  else if(c.type==='addReference'){const r=c.reference;if(!r||Object.keys(r).some(k=>!['id','taskId','container'].includes(k))||!validId(r.id)||!validId(r.taskId)||!r.container||!['account','group','task'].includes(r.container.kind)||!validId(r.container.id)||Object.keys(r.container).some(k=>!['kind','id'].includes(k)))throw new StructureError(400,'Invalid reference');}
  return input;
 }
-// Unmounted, pool-injected adapter. Never reads environment variables or opens a driver.
+// Pool-injected adapter; production management remains disabled. Never reads environment variables or opens a driver.
 export class PostgresStructureRepository{
  constructor(pool,{authorizePrincipal=authorizeCurrentPrincipal,authorizePlacement}={}){this.pool=pool;this.authorizePrincipal=authorizePrincipal;this.authorizePlacement=authorizePlacement;}
  async read(context,workspaceId,target){scope(context,workspaceId,'tasks:read');return transaction(this.pool,async client=>{await this.authorizePrincipal(client,context,workspaceId,'tasks:read');const{model,data}=await loadStructure(client,workspaceId),meta=await client.query('SELECT revision FROM workspace_revisions WHERE workspace_id=$1',[workspaceId]);if(!meta.rows.length)throw new StructureError(404,'Not found');model.revision=Number(meta.rows[0].revision);const access=structureAccess(data,model,context);let writable=context.scopes?.includes('tasks:write')===true;if(writable){try{await this.authorizePrincipal(client,context,workspaceId,'tasks:write');}catch(error){if(error.status===404)writable=false;else throw error;}}if(!writable)access.canEditTask=()=>false;if(!target)return{revision:model.revision,pages:roots(model,context,access)};const result=projectPage(model,context,target,access);for(const task of [...result.entries,...(result.pageTask?[result.pageTask]:[])])for(const dep of task.effectivePrerequisites){const targetId=task.taskId||target.id;try{checkItemChange(data.tasks.find(t=>t.id===targetId).editors[context.subjectId],data.tasks.find(t=>t.id===targetId).relationTiers.deps[dep.taskId],undefined);}catch{dep.canRemove=false;}}return result;});}
@@ -54,3 +54,5 @@ export class PostgresStructureRepository{
   const response={revision:revision+1,operationId};await client.query('UPDATE workspace_revisions SET revision=revision+1 WHERE workspace_id=$1',[workspaceId]);await client.query('INSERT INTO operations(workspace_id,subject_id,operation_id,fingerprint,response) VALUES($1,$2,$3,$4,$5)',[workspaceId,context.subjectId,operationId,fingerprint,response]);await client.query('INSERT INTO structure_operation_evidence(workspace_id,subject_id,operation_id,evidence) VALUES($1,$2,$3,$4)',[workspaceId,context.subjectId,operationId,evidence]);await client.query('INSERT INTO audit(workspace_id,subject_id,operation_id,kind,actor_kind,credential_id,managing_account_id) VALUES($1,$2,$3,$4,$5,$6,$7)',[workspaceId,context.subjectId,operationId,c.type,context.principalKind||'human',context.credentialId||null,context.ownerAccountId||null]);return response;
  });}catch(error){if(error.code==='23505')throw new StructureError(409,'Structure conflict');if(['40001','40P01'].includes(error.code))throw new StructureError(409,'Concurrent update');throw error;}}
 }
+
+export async function projectStructureSnapshot(client,data,context,workspaceId){const{model}=await loadStructure(client,workspaceId,data),access=structureAccess(data,model,context),visible=visibleSnapshot(data,context);for(const task of visible.tasks)task.completion=projectPage(model,context,{kind:'task',id:task.id},access).pageTask.completion;return visible;}
