@@ -104,6 +104,9 @@
 !/v02/cli/content-contract-test.mjs
 !/v02/cli/creation-draft.mjs
 !/v02/cli/main.mjs
+!/v02/cli/readiness.mjs
+!/v02/cli/readiness-test.mjs
+!/v02/cli/README.md
 !/v02/trial/application-test.mjs
 !/v02/trial/application.mjs
 !/v02/trial/identity-access.mjs
