@@ -40,6 +40,13 @@ assert.deepEqual(await snapshot(root), before);
 const inputs = JSON.parse(await fs.readFile(path.join(root, '.build/inputs.json'), 'utf8'));
 assert(!inputs.browser.some(file => /app\.mjs|file-client|ledger|fixture|fake-postgres/.test(file)));
 assert(!inputs.server.some(file => /fixture|fake-postgres|seed|prepare|manifest/.test(file)));
+assert(inputs.demo.length > 0);
+assert(!inputs.demo.some(file => /auth|trial|structure\/db|fixture|postgres/.test(file)));
+const demoJS = await fs.readFile(path.join(root, 'public/demo.js'), 'utf8');
+for (const marker of ['thdmn_v02_trial', 'qa-v02-write-parent', '1706f733', 'DATABASE_URL', 'NEON_AUTH', '/api/v02', 'fetch(']) assert(!demoJS.includes(marker), marker);
+const config = JSON.parse(await fs.readFile(path.join(root, 'vercel.json'), 'utf8'));
+assert(config.headers.find(rule => rule.source === '/demo.html').headers.some(header => header.key === 'Content-Security-Policy' && header.value.includes("connect-src 'none'")));
+assert(inputs.publicFiles.includes('demo.html') && inputs.publicFiles.includes('demo.css') && inputs.publicFiles.includes('demo.js'));
 const html = await fs.readFile(path.join(root, 'public/index.html'), 'utf8');
 assert(html.includes('src="/shell.js"') && !html.includes('src="/app-entry.mjs"'));
 for (const directory of ['public', '.build']) {

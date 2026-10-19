@@ -2,8 +2,8 @@
 
 This is a new, intentionally public fictional cafe dataset. It never imports the
 existing trial fixture, identity data, Task data, SQL repository, auth SDK or API.
-The production build and authenticated application entry do not import this demo.
-No demo commit has been pushed or deployed.
+The production build publishes independent /demo.html, /demo.css and /demo.js
+static artifacts. The authenticated application entry does not import this demo.
 
 ```
 node v02/public-demo/test.mjs
@@ -27,7 +27,7 @@ without existing access. No email/password provider or credentials are created.
 Validation: dedicated model/isolation/storage/dependency-closure tests pass.
 Browser: read-only sample, copy completion1/4->4/4, title edit, reload showing the
 unchanged original, explicit copy resume, child addition reopening parent hold,
-and reset all worked. Local API request counter remained0. The demo is not yet
-included in scripts/build.mjs or public deployment; publishing it and changing
-Vercel protection are separate later actions. Do not expose the existing trial
+and reset all worked. Local API request counter remained0. The public build checks its separate dependency closure and applies
+connect-src none to /demo.html. Vercel Standard Protection keeps Preview and
+immutable deployment URLs protected; the stable production domain is public. Do not expose the existing trial
 fixture or add an anonymous private Task endpoint to implement sample browsing.
