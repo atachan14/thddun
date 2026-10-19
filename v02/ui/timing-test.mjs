@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { timed } from './timing.mjs';
+const secret = 'synthetic-token-must-not-be-recorded';
+assert.equal(await timed('token', async () => secret), secret);
+await assert.rejects(timed('session', async () => { throw Error(secret); }), /synthetic-token/);
+await assert.rejects(timed(secret, () => null), /Unknown timing stage/);
+for (let i=0;i<10;i++) await timed('token', () => secret);
+const records=performance.getEntriesByType('measure').filter(x=>x.name.startsWith('thdmn:'));
+assert.equal(records.filter(x=>x.name==='thdmn:token').length,1);
+assert(records.every(x=>Number.isFinite(x.duration)&&x.duration>=0&&x.detail===null));
+assert(!JSON.stringify(records).includes(secret));
+console.log('PASS fixed timing stages: bounded records, numeric durations only, no payload/error detail, errors preserved.');

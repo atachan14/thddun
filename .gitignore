@@ -124,6 +124,8 @@
 !/v02/ui/task-client.mjs
 !/v02/ui/task-panel.mjs
 !/v02/ui/task-view.mjs
+!/v02/ui/timing.mjs
+!/v02/ui/timing-test.mjs
 !/scripts/
 /scripts/*
 !/scripts/build-test.mjs
