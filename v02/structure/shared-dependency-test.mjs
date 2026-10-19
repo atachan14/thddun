@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import{calculateCompletion,projectPage}from'./contract.mjs';
+import{structureSample}from'./sample.mjs';import{StructureMemoryStore}from'./memory-store.mjs';import{createStructureApi}from'./api.mjs';
+const m=structureSample(),before=structuredClone(m),c=calculateCompletion(m);
+assert.equal(c.get('project').appearance.key,'hold');assert.equal(c.get('project').completed,false);
+assert.equal(c.get('build').appearance.key,'prerequisite-pending');assert.equal(c.get('personal').completed,false);assert.deepEqual(m,before);
+const finished=structuredClone(m);finished.tasks.find(t=>t.id==='brief').workStates.tester='done';assert([...calculateCompletion(finished).values()].every(x=>x.completed));
+const ctx={subjectId:'synthetic-editor',csrfVerified:true},account={kind:'account',id:'demo-account'},access={canReadPage:()=>true,canReadTask:()=>true,canEditTask:(_,id)=>id==='personal',canShareDependency:()=>true};
+const own=projectPage(m,ctx,account,access),builds=own.entries.filter(x=>x.taskId==='build');assert.equal(builds.length,2);assert.deepEqual(builds[0].completion,builds[1].completion);assert.deepEqual(builds[0].completion,projectPage(m,ctx,{kind:'task',id:'build'},access).pageTask.completion);
+const store=new StructureMemoryStore(m),api=createStructureApi({authenticate:async()=>ctx,loadModel:async()=>store.snapshot(),...access,execute:(...args)=>store.execute(...args)});
+const operation=(id,from,to='task:personal',revision=0,container=account)=>({operationId:id,expectedRevision:revision,edge:{id:'edge-'+id,container,fromEntryId:from,toEntryId:to}});
+const post=(input,handler=api)=>handler(new Request('https://synthetic.invalid/api/v02/structure/dependencies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(input)}));
+const add=operation('operation-0001','reference:brief-shortcut');assert.equal((await post(add)).status,200);assert.equal(store.revision,1);assert.equal(store.audit.length,1);assert.equal(access.canEditTask(ctx,'brief'),false);
+assert.equal((await(await post(add)).json()).replayed,true);assert.equal(store.revision,1);
+const group=projectPage(store.snapshot(),ctx,{kind:'group',id:'demo-group'},access);assert.deepEqual(group.entries.find(e=>e.taskId==='personal').effectivePrerequisites.map(x=>x.taskId).sort(),['brief','build']);
+assert.equal((await post(operation('duplicate-0001','reference:second-shortcut','task:personal',1))).status,409);
+assert.throws(()=>store.execute(ctx,operation('self-0000001','reference:personal-shortcut','reference:second-shortcut',1),{...access,canEditTask:()=>true}),e=>e.status===400);
+assert.equal((await post(operation('stale-000001','reference:brief-shortcut','task:personal',0))).status,409);
+const denied=createStructureApi({authenticate:async()=>ctx,loadModel:async()=>store.snapshot(),...access,canEditTask:()=>false,execute:(...a)=>store.execute(...a)});assert.equal((await post(add,denied)).status,403);
+const privateApi=createStructureApi({authenticate:async()=>ctx,loadModel:async()=>store.snapshot(),...access,canReadTask:(_,id)=>id!=='brief',execute:(...a)=>store.execute(...a)});const hidden=await post(operation('hidden-00001','reference:brief-shortcut','task:personal',1),privateApi),missing=await post(operation('missing-0001','reference:unknown','task:personal',1),privateApi);assert.equal(hidden.status,404);assert.equal(missing.status,404);assert.equal(await hidden.text(),await missing.text());
+for(const override of [{canShareDependency:()=>false},{authenticate:async()=>({...ctx,csrfVerified:false})}]){const handler=createStructureApi({authenticate:async()=>ctx,loadModel:async()=>store.snapshot(),...access,execute:(...a)=>store.execute(...a),...override});assert.equal((await post(add,handler)).status,403);}
+assert.equal((await post(add,createStructureApi({authenticate:async()=>ctx,loadModel:async()=>m,...access}))).status,503);
+const cyclic=structureSample();cyclic.references.push({id:'personal-in-project',taskId:'personal',container:{kind:'task',id:'project'}});const cycleStore=new StructureMemoryStore(cyclic);assert.throws(()=>cycleStore.execute(ctx,operation('cycle-000001','reference:personal-in-project','task:build',0,{kind:'task',id:'project'}),{...access,canEditTask:()=>true}),e=>e.status===400);assert.equal(cycleStore.revision,0);
+assert.equal(store.revision,1);assert.equal(store.audit.length,1);
+console.log('PASS shared completion across all references, child hold preserved, B-only edit authority, atomic memory mutation/replay/revocation, duplicate/self/cross-reference cycle/private endpoint/stale revision/CSRF/audience rejection; synthetic only.');

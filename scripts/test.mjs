@@ -9,7 +9,7 @@ const tests = [
   'v02/auth/session-test.mjs', 'v02/auth/sdk-contract-test.mjs',
   'v02/trial/application-test.mjs', 'v02/trial/node-handler-test.mjs', 'v02/trial/deployment-host-test.mjs',
   'v02/ui/create-client-test.mjs', 'v02/ui/integration-test.mjs', 'v02/ui/timing-test.mjs',
-  'v02/ui/safety-test.mjs', 'v02/ui/sql-review-test.mjs', 'v02/structure/contract-test.mjs', 'scripts/build-test.mjs'
+  'v02/ui/safety-test.mjs', 'v02/ui/sql-review-test.mjs', 'v02/structure/contract-test.mjs', 'v02/structure/shared-dependency-test.mjs', 'scripts/build-test.mjs'
 ];
 for (const test of tests) {
   const result = spawnSync(process.execPath, [test], { cwd: root, stdio: 'inherit', windowsHide: true });

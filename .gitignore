@@ -137,6 +137,9 @@
 !/v02/structure/sample.mjs
 !/v02/structure/preview.html
 !/v02/structure/contract-test.mjs
+!/v02/structure/completion.mjs
+!/v02/structure/memory-store.mjs
+!/v02/structure/shared-dependency-test.mjs
 !/v02/structure/local-server.mjs
 !/v02/structure/README.md
 !/scripts/
