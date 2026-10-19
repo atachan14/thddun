@@ -1,80 +1,99 @@
-# Isolated v0.2 page-structure contract
+# Isolated v0.2 page and reference dependency contract
 
-This read-only synthetic API/UI prototype is not mounted in the deployed app.
-It does not change PostgreSQL, existing API behavior, Google login, permissions,
-ownership or any live Task. Its small sample is neither the live connection-check
-data nor the future README showcase dataset.
+This read-only synthetic prototype is not mounted in the deployed app. It does
+not change SQL, Google login, permissions, ownership, Task state or production
+validation. The sample is separate from connection-check and README showcase data.
 
 ```sh
 node v02/structure/contract-test.mjs
 node v02/structure/local-server.mjs
 ```
 
-Open http://127.0.0.1:8768/ . The local server binds only127.0.0.1, uses an explicit
-synthetic identity, and serves only the named preview assets/read-only endpoints.
-It is not an authentication implementation or a proxy to a protected deployment.
+Open http://127.0.0.1:8768/ . The preview uses an explicit synthetic identity,
+loopback only, and no external API/DB/proxy. The API factory requires independent
+authentication and page/Task read bindings; writes remain405.
 
-## Minimal structural representation
+## Confirmed user direction
 
-- Account and Group are terminal **page kinds**. No implicit Account->Group parent,
-  administrative privilege or organizational hierarchy is defined here.
-- Each real Task has exactly one typed parent `{kind: account|group|task, id}`.
-  Following actual parents must end at an existing Account or Group; cycles and
-  dangling parents are rejected. Parentage is separate from ownership/read policy.
-- A reference has its own ID, one real target Task ID and one page container.
-  Multiple references to one Task stay separate entries. They display the same
-  target's title and link to its actual Task page, whose breadcrumbs follow its
-  real parent. They do not copy/reparent the target or grant access to it.
-- Prerequisites connect actual Task IDs with the **same typed actual parent**.
-  Self edges, cycles, duplicates, parent/child edges and cross-parent edges fail.
-  Displaying a reference beside another item does not itself make the target a
-  sibling. This conservative interpretation needs explicit confirmation before
-  any new write API/live migration if the intended rule is display-entry siblings.
-- The view labels `実体Task` and `参照`; reference entries do not generate additional
-  prerequisite edges or count as another Task entity.
+Task references can be registered under a Task, AccountPage or GroupPage. A
+reference can be brought beside another item so prerequisites across original
+parents are expressed **between sibling placements**. Commit5115c4c's restriction
+to the same actual Task parent was an incorrect conservative interpretation and
+is superseded here. Whether references are eligible siblings is NOT undecided.
 
-## Read API and visibility boundary
+Account and Group remain terminal page kinds. Real Task parents and reference
+containers are distinct: a real Task has one typed actual parent; a reference
+has its own entry ID, target Task ID and page container. Opening a reference
+navigates to the same real entity and its actual breadcrumbs. No copy, reparent,
+ownership transfer or read grant is performed.
 
-`GET /api/v02/structure/roots` and `GET /api/v02/structure/pages/{kind}/{id}` are
-factory contracts only. A production caller must bind authentication, model
-loading and explicit page/Task read decisions; absent bindings return503.
-Anonymous requests return401. Writes return405. Actor/query overrides are rejected.
-Missing and inaccessible pages return the same404.
+## Dependency representation and safety
 
-The prototype never derives permission from parentage, reference placement,
-Account ownership or Group membership. Its injected access callbacks are test
-inputs, not a proposed new product policy. Hidden reference targets are omitted;
-an unreadable container cannot be opened; unreadable breadcrumb ancestors stop
-the trail without leaking IDs/titles or changing a child's real parent. Access
-does not propagate along references. The UI inserts titles using textContent.
+`dependencyEdges` holds `{id, container, fromEntryId, toEntryId}`. Entry IDs are
+`task:ID` for a directly contained actual Task or `reference:ID` for a reference
+placed in that same container. The direction is prerequisite -> dependent.
+Actual parents of the target entities may differ. Endpoints from different page
+containers are invalid: place a reference first rather than using a direct
+cross-page edge. References do not target other references.
 
-## Compatibility and decisions still needed
+Each endpoint resolves to a real Task ID for safety checks. Different placements
+of the same real entity cannot depend on one another, including real-vs-reference
+and reference-vs-reference. Dependency cycles are rejected across the union of
+all reference placements after entity resolution, not just per visible page.
+The existing child-completion safety relation (parent consumes child) is included
+when detecting cycles; this prototype computes no completion result or state.
+Duplicate exact placement pairs and edge IDs fail; parallel edges through distinct
+references are represented separately without counting them as new Task entities.
 
-The existing deployed v0.2 has parent_id for Task->Task and owner_space_id for
-ownership, with null top-level parents. It has no typed Account/Group terminal
-parent field. **Do not convert owner_space_id into structural parent automatically.**
-Existing top-level prerequisite edges span different owners; doing so would turn
-them into cross-parent edges and conflict with the sibling rule. Existing data
-and legacy validators are unchanged by this isolated contract. Future migration
-needs an approved structural placement for those Tasks, separately from owner.
+`inspectDependencyProposal` is pure and nonmutating. It checks visible sibling
+placements and structural/cycle constraints, but always returns writeReady=false
+with required checks authority, audience and completion-scope. Structural validity
+is NOT permission to save. No edge creation/editing endpoint is mounted.
 
-Not decided/implemented:
+## Privacy
 
-1. Who may create/manage Account/Group pages, membership and roles; Account page
-   privacy and Group page read permissions. No new admin grants inferred.
-2. Whether the sibling restriction also permits links between displayed reference
-   entries, or only actual-parent siblings as this safe read-only model uses.
-3. Who may create/move references and whether a reference may be placed in its
-   own target/descendant. Current rendering does not traverse references, so no
-   automatic hierarchy expansion/deletion rule is inferred from such placement.
-4. Root-Task creation, reparent/move authority and effect on prerequisites, copied
-   Policy, read spaces, references and credential subtree scopes.
-5. Ownership transfer and delete/archive behavior, including incoming references,
-   children, dependencies and placements. No cascades or writes are implemented.
-6. Placement/edge editing, validation/audit/idempotency integration and the live
-   SQL migration shape. No schema changes or public push are part of this work.
+Hidden or nonexistent pages/endpoints give the same404. A reference grants no
+read access. Output contains an edge only when its page and both endpoint entries
+are visible; hidden Task names/IDs, reference IDs, edge IDs and edge counts are not
+returned. Tests verify that changing a hidden title or removing a hidden edge
+leaves the visible projection exactly unchanged. Parent breadcrumbs stop at an
+unreadable ancestor without rewriting parentage. No blocked/completion indicators
+are emitted that could reveal a hidden prerequisite.
 
-Tests cover typed roots/parent cycles, actual siblings, duplicate independent
-references, same-entity title projection, hidden targets/containers/ancestors,
-fail-closed API and nonmutation. Real production authorization remains the
-existing implementation until a separate approved integration.
+For future writes, effects on readers outside the placement page must be checked
+before accepting a relation. It is unsafe to assume that because the current
+editor can read both Tasks, every reader of a shared dependent can read its source.
+Audience compatibility, mutation authority and hidden-global-constraint error
+handling are unresolved write gates, not newly invented permission rules.
+
+## Remaining decisions (with examples)
+
+1. **Constraint effect / completion scope.** On AccountPage P, reference A precedes
+   reference B; B's actual entity lives on GroupPage G. Must B on G and all other
+   references also wait for A, or does the extra prerequisite apply only to B's
+   placement on P? This contract records the selected placement pair but does not
+   choose global-vs-local completion semantics or create per-reference work state.
+2. **Multiple references to one entity.** If B1 and B2 both point to B, and only
+   B1 has incoming A, should B2 show the constraint? Should an identical effective
+   A->B edge on a second page be redundant or an independently managed relation?
+   Both remain one real Task; counting/propagation is deliberately not implemented.
+3. **Authority and audience.** Who may connect a readable reference to a shared B:
+   page editor, source/target editor, or a combination? If B has a reader who
+   cannot read A, can the edge be registered at all? No administrative/edit grant
+   or hidden blocker behavior has been chosen.
+4. **Placement/parent changes and deletion.** Removing or moving a reference that
+   anchors an edge might reject the move, detach the edge, or retain an effective
+   entity edge. Ownership transfer, real parent move and deletion cascade remain
+   out of scope; no such write behavior is implemented.
+
+Current deployed SQL has Task parent_id and owner_space_id but lacks typed terminal
+Account/Group parent/placement-edge endpoints. Do not derive structural parent
+from owner_space_id or migrate existing prerequisites automatically. The approved
+reference-placement approach provides a way to present existing cross-parent
+relations, but exact placement and live migration still require separate review.
+
+Tests cover cross-actual-parent sibling placements, reference-to-reference edges,
+entity self-dependency through distinct refs, cross-page reference cycles,
+parent-completion cycles, explicit placement scope, hidden projection equivalence,
+read-only API and fail-closed/unconfigured bindings. Production source closure,
+permissions and data are untouched.
