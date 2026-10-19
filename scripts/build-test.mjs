@@ -61,10 +61,13 @@ const stable = 'thdmn-aklius14pg-8355s-projects.vercel.app';
 const compiled = trialNodeHandler({ VERCEL: '1', VERCEL_ENV: 'production',
   VERCEL_PROJECT_ID: 'prj_52ZvN8FCsa7INgMKSDhh16dMLvyP',
   VERCEL_URL: 'thdmn-buildtest1-aklius14pg-8355s-projects.vercel.app',
-  VERCEL_PROJECT_PRODUCTION_URL: stable, NEON_AUTH_BASE_URL: 'https://auth.example.invalid/db/auth' });
+  VERCEL_PROJECT_PRODUCTION_URL: 'thdmn.vercel.app', NEON_AUTH_BASE_URL: 'https://auth.example.invalid/db/auth' });
 const stableResult = response();
 await compiled({ headers: { host: stable }, method: 'GET', url: '/api/v02/environment' }, stableResult);
 assert.equal(stableResult.code, 200);
+const domainResult = response();
+await compiled({ headers: { host: 'thdmn.vercel.app' }, method: 'GET', url: '/api/v02/environment' }, domainResult);
+assert.equal(domainResult.code, 200);
 const spoofResult = response();
 await compiled({ headers: { host: 'other.invalid', 'x-forwarded-host': stable },
   method: 'GET', url: '/api/v02/environment' }, spoofResult);

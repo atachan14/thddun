@@ -1,5 +1,6 @@
 export const PROJECT_ID = 'prj_52ZvN8FCsa7INgMKSDhh16dMLvyP';
 export const PRODUCTION_HOST = 'thdmn-aklius14pg-8355s-projects.vercel.app';
+export const PRODUCTION_DOMAIN = 'thdmn.vercel.app';
 
 // This pattern validates trusted server configuration; it never matches a request
 // directly. Requests must equal one of the exact strings returned below.
@@ -15,8 +16,9 @@ export function deploymentHosts(env) {
     if (env.VERCEL_ENV === 'production') {
       // Both project identity and the injected production domain must agree with
       // this already-assigned, already-Auth-trusted project alias.
-      if (env.VERCEL_PROJECT_PRODUCTION_URL !== PRODUCTION_HOST) return null;
+      if (env.VERCEL_PROJECT_PRODUCTION_URL !== PRODUCTION_DOMAIN) return null;
       hosts.add(PRODUCTION_HOST);
+      hosts.add(PRODUCTION_DOMAIN);
     }
     return hosts;
   }

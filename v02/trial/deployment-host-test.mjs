@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { PROJECT_ID, PRODUCTION_HOST, deploymentHosts } from './deployment-hosts.mjs';
+import { PROJECT_ID, PRODUCTION_HOST, PRODUCTION_DOMAIN, deploymentHosts } from './deployment-hosts.mjs';
 import { trialNodeHandler } from './node-handler.mjs';
 import { createTrialApplication } from './application.mjs';
 
@@ -7,7 +7,7 @@ const generated = 'thdmn-nextbuild1-aklius14pg-8355s-projects.vercel.app';
 const previous = 'thdmn-acmqcj34i-aklius14pg-8355s-projects.vercel.app';
 const other = 'other-nextbuild1-aklius14pg-8355s-projects.vercel.app';
 const env = { VERCEL: '1', VERCEL_ENV: 'production', VERCEL_PROJECT_ID: PROJECT_ID,
-  VERCEL_URL: generated, VERCEL_PROJECT_PRODUCTION_URL: PRODUCTION_HOST,
+  VERCEL_URL: generated, VERCEL_PROJECT_PRODUCTION_URL: PRODUCTION_DOMAIN,
   NEON_AUTH_BASE_URL: 'https://auth.example.invalid/db/auth' };
 const invoke = async (handler, { host = PRODUCTION_HOST, url = '/api/v02/environment',
   method = 'GET', headers = {}, body = {} } = {}) => {
@@ -17,8 +17,8 @@ const invoke = async (handler, { host = PRODUCTION_HOST, url = '/api/v02/environ
   return response;
 };
 const handler = trialNodeHandler(env);
-assert.deepEqual([...deploymentHosts(env)], [generated, PRODUCTION_HOST]);
-for (const host of [generated, PRODUCTION_HOST]) {
+assert.deepEqual([...deploymentHosts(env)], [generated, PRODUCTION_HOST, PRODUCTION_DOMAIN]);
+for (const host of [generated, PRODUCTION_HOST, PRODUCTION_DOMAIN]) {
   assert.equal((await invoke(handler, { host })).status, 200);
   assert.equal((await invoke(handler, { host, url: '/api/v02/snapshot?workspace=demo' })).status, 401);
   assert.equal((await invoke(handler, { host, url: '/api/v02/commands', method: 'POST',
@@ -36,7 +36,7 @@ for (const headers of [
 // Proxy headers cannot change which origin is used on an otherwise valid request.
 assert.equal((await invoke(handler, { headers: { 'x-forwarded-host': 'evil.invalid',
   forwarded: 'host=evil.invalid;proto=http' } })).status, 200);
-for (const origin of ['https://evil.invalid', 'https://' + generated, 'null',
+for (const origin of ['https://evil.invalid', 'https://' + generated, 'https://' + PRODUCTION_DOMAIN, 'null',
   'http://' + PRODUCTION_HOST, 'https://' + PRODUCTION_HOST + '.evil.invalid']) {
   for (const method of ['GET', 'POST']) {
     assert.equal((await invoke(handler, { method, headers: { origin },
@@ -50,6 +50,7 @@ for (const url of ['https://evil.invalid/api/v02/environment', '//evil.invalid/a
 for (const patch of [
   { VERCEL_PROJECT_ID: 'prj_other' }, { VERCEL_PROJECT_ID: undefined },
   { VERCEL_PROJECT_PRODUCTION_URL: other }, { VERCEL_PROJECT_PRODUCTION_URL: undefined },
+  { VERCEL_PROJECT_PRODUCTION_URL: PRODUCTION_HOST },
   { VERCEL_PROJECT_PRODUCTION_URL: 'https://' + PRODUCTION_HOST },
   { VERCEL_PROJECT_PRODUCTION_URL: PRODUCTION_HOST + '.evil.invalid' },
   { VERCEL_URL: other }, { VERCEL_URL: PRODUCTION_HOST }, { VERCEL_URL: generated + ':443' }
@@ -59,13 +60,14 @@ for (const patch of [
 }
 const preview = trialNodeHandler({ ...env, VERCEL_ENV: 'preview' });
 assert.equal((await invoke(preview)).status, 403);
+assert.equal((await invoke(preview, { host: PRODUCTION_DOMAIN })).status, 403);
 assert.equal((await invoke(preview, { host: generated })).status, 200);
 assert.equal(deploymentHosts({ VERCEL_URL: generated }), null);
 
 // Independent Fetch application boundary has the same exact-host and Origin rules.
 let opens = 0;
 const app = createTrialApplication({ env, openPool() { opens++; throw Error('No DB permitted'); } });
-for (const host of [PRODUCTION_HOST, generated]) {
+for (const host of [PRODUCTION_HOST, PRODUCTION_DOMAIN, generated]) {
   assert.equal((await app(new Request('https://' + host + '/api/v02/environment'))).status, 200);
   assert.equal((await app(new Request('https://' + host + '/api/v02/snapshot?workspace=demo'))).status, 401);
 }

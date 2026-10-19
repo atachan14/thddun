@@ -28,11 +28,14 @@ app-entry.mjs remains tracked for the local legacy server.
 
 ## Exact host and callback contract
 
-The existing stable user entry is:
+The existing stable project alias is:
 
 `https://thdmn-aklius14pg-8355s-projects.vercel.app`
 
 It is already assigned to this project and already trusted by existing Neon Auth.
+The project's verified Production domain is `https://thdmn.vercel.app`; that exact
+domain is also already Auth-trusted and accepted as a stable entry. Vercel's
+VERCEL_PROJECT_PRODUCTION_URL selects this shorter domain, not the longer alias.
 Start Google login there: the unchanged SDK callbackURL (location.href) returns to
 that same existing trusted origin. No new Google app/provider, credential or Auth
 origin is required for this route. The provider callback stays on existing Neon Auth.
@@ -44,7 +47,7 @@ updates. Use the stable alias routinely; unique deployment hosts are diagnostics
 The server accepts only the exact current deployment hostname and, in Production,
 the exact stable alias above. The stable alias requires VERCEL_ENV=production,
 VERCEL_PROJECT_ID=prj_52ZvN8FCsa7INgMKSDhh16dMLvyP and trusted system
-VERCEL_PROJECT_PRODUCTION_URL equal to that alias. VERCEL_URL must have this
+VERCEL_PROJECT_PRODUCTION_URL equal to `thdmn.vercel.app`. VERCEL_URL must have this
 project's generated-name form; that pattern validates server configuration only.
 Requests must match the resulting exact strings. Other projects/teams, stale
 hosts, lookalike suffixes, ports and unknown hosts are rejected. Both the Node and
@@ -67,7 +70,7 @@ do not broaden trust or replace it with request-derived data.
 | NEON_AUTH_BASE_URL | Keep existing Production public Auth base for the same branch |
 | DATABASE_URL_UNPOOLED | Keep existing setting; app/build does not read it |
 | VERCEL_URL | Automatic current deployment host |
-| VERCEL_PROJECT_PRODUCTION_URL | Automatic production domain, matching exact existing stable alias |
+| VERCEL_PROJECT_PRODUCTION_URL | Automatic production domain, exactly thdmn.vercel.app |
 | VERCEL_PROJECT_ID / VERCEL_ENV | Automatic project/environment identity |
 
 No new Preview scope, DB branch, secret or Auth origin is proposed. Current
