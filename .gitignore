@@ -129,6 +129,16 @@
 !/v02/ui/task-view.mjs
 !/v02/ui/timing.mjs
 !/v02/ui/timing-test.mjs
+!/v02/structure/
+/v02/structure/*
+!/v02/structure/contract.mjs
+!/v02/structure/api.mjs
+!/v02/structure/browser.mjs
+!/v02/structure/sample.mjs
+!/v02/structure/preview.html
+!/v02/structure/contract-test.mjs
+!/v02/structure/local-server.mjs
+!/v02/structure/README.md
 !/scripts/
 /scripts/*
 !/scripts/build-test.mjs
