@@ -21,5 +21,5 @@ export async function mountStructureBrowser(root,{fetchImpl=fetch,storageLabel='
   }
   notice.textContent=dataLabel+' / '+storageLabel+' / revision '+data.revision;
  }catch{if(mine===turn){body.replaceChildren();notice.textContent='ページを表示できません';}}}
- try{const data=await request('/api/v02/structure/roots');for(const p of data.pages)nav.append(button(p.kind+': '+p.title,p));if(data.pages.length)await show(data.pages[0]);else notice.textContent='表示できるページはありません';}catch{notice.textContent='構造データを読み込めません';}
+ try{const data=await request('/api/v02/structure/roots');for(const p of data.pages)nav.append(button(p.kind+': '+p.title,p));if(data.pages.length)await show(data.pages[0]);else notice.textContent='表示できるページはありません';}catch(error){notice.textContent='構造データを読み込めません'+(error.status?'（HTTP '+error.status+'）':'');}
 }
