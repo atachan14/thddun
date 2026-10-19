@@ -1,4 +1,4 @@
-export async function mountStructureBrowser(root,{fetchImpl=fetch}={}){
+export async function mountStructureBrowser(root,{fetchImpl=fetch,storageLabel='メモリ保存'}={}){
  const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;},notice=el('p','合成構造データを読み込み中…'),nav=el('nav'),body=el('section');notice.setAttribute('role','status');root.replaceChildren(notice,nav,body);let turn=0;
  const button=(label,target)=>{const b=el('button',label);b.type='button';b.onclick=()=>show(target);return b;};
  async function request(path,options){const r=await fetchImpl(path,{cache:'no-store',...options});if(!r.ok)throw Object.assign(Error('Request rejected'),{status:r.status});return r.json();}
@@ -19,7 +19,7 @@ export async function mountStructureBrowser(root,{fetchImpl=fetch}={}){
    from.onchange=targets;targets();const a=el('label','先に完了する配置'),b=el('label','前提を追加する配置（B編集権限）');a.append(from);b.append(to);form.append(el('h3','前提を追加・実体と全参照へ共有'),a,b,error,reload,save);body.append(form);reload.onclick=()=>show(target);
    form.onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;save.disabled=reload.disabled=from.disabled=to.disabled=true;pending??={operationId:crypto.randomUUID(),expectedRevision:data.revision,edge:{id:crypto.randomUUID(),container:{kind:target.kind,id:target.id},fromEntryId:from.value,toEntryId:to.value}};try{await request('/api/v02/structure/dependencies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(pending)});pending=null;await show(target);}catch(err){if(err.status){pending=null;error.textContent=err.status===409?'重複または更新競合。最新を再読込してください':err.status===403?'依存先Bの編集権限または共有安全性を確認できません':'前提は登録できません';}else error.textContent='結果未確認。同じ操作IDで再送できます';}finally{busy=false;save.disabled=false;reload.disabled=false;from.disabled=to.disabled=!!pending;save.textContent=pending?'同じ操作を再送':'共通前提を追加';}};
   }
-  notice.textContent='合成データ / メモリ保存 / revision '+data.revision;
+  notice.textContent='合成データ / '+storageLabel+' / revision '+data.revision;
  }catch{if(mine===turn){body.replaceChildren();notice.textContent='ページを表示できません';}}}
  try{const data=await request('/api/v02/structure/roots');for(const p of data.pages)nav.append(button(p.kind+': '+p.title,p));if(data.pages.length)await show(data.pages[0]);else notice.textContent='表示できるページはありません';}catch{notice.textContent='構造データを読み込めません';}
 }

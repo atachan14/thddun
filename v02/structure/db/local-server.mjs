@@ -1,0 +1,13 @@
+// Disposable LOCAL SQL browser preview. No remote URL, real authentication or credential access.
+import http from'node:http';import fs from'node:fs/promises';import{openTestDatabase,legacyFixture,migrate,localPool}from'./test-support.mjs';import{PostgresStructureRepository}from'./repository.mjs';import{createPostgresStructureApi}from'./api.mjs';
+const port=Number(process.argv[2]||8770);if(!Number.isInteger(port)||port<1024||port>65535)throw Error('Invalid port');const origin='http://127.0.0.1:'+port,db=await openTestDatabase();await legacyFixture(db);await migrate(db);
+// Serialize transactions for this single embedded engine. Real multi-connection behavior is not implied.
+const base=localPool(db);let tail=Promise.resolve();const pool={async connect(){const previous=tail;let done;tail=new Promise(resolve=>{done=resolve;});await previous;const client=await base.connect();return{query:(...args)=>client.query(...args),release(){client.release();done();}};}};
+const context={subjectId:'editor',identitySubjectId:'verified-editor',principalKind:'human',workspaceIds:['fixture'],scopes:['tasks:read','tasks:write'],csrfVerified:true};
+// No placement-management binding: reference creation/removal remains disabled, as recommended for first activation.
+const api=createPostgresStructureApi({repository:new PostgresStructureRepository(pool),authenticate:async()=>context,allowedOrigins:new Set([origin])});
+const files=new Map([['/','local-preview.html'],['/browser.mjs','../browser.mjs']]);
+const server=http.createServer(async(req,res)=>{try{if(req.headers.host!=='127.0.0.1:'+port){res.writeHead(403).end();return;}if(req.url.startsWith('/api/v02/structure/')){let size=0;const chunks=[];for await(const c of req){size+=c.length;if(size>32768){res.writeHead(413).end();return;}chunks.push(c);}const response=await api(new Request(origin+req.url,{method:req.method,headers:req.headers,...(!['GET','HEAD'].includes(req.method)?{body:Buffer.concat(chunks)}:{})}));res.writeHead(response.status,Object.fromEntries(response.headers)).end(await response.text());return;}
+ if(req.method!=='GET'||!files.has(req.url)){res.writeHead(404).end();return;}const name=files.get(req.url);res.writeHead(200,{'Content-Type':name.endsWith('.html')?'text/html;charset=utf-8':'text/javascript;charset=utf-8','Cache-Control':'no-store'}).end(await fs.readFile(new URL(name,import.meta.url)));}catch{res.writeHead(503).end('Local SQL preview unavailable');}});
+server.listen(port,'127.0.0.1',()=>console.log('LOCAL PGlite SQL preview '+origin+'; nine fictional tasks; synthetic auth; no placement grants; no remote DB.'));
+async function stop(){server.close();await db.close();process.exit(0);}process.once('SIGINT',stop);process.once('SIGTERM',stop);

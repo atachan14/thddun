@@ -181,3 +181,5 @@
 !/v02/structure/db/install-test-engine.mjs
 !/v02/structure/db/test.mjs
 !/v02/structure/db/preflight.mjs
+!/v02/structure/db/local-server.mjs
+!/v02/structure/db/local-preview.html

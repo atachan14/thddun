@@ -2,8 +2,9 @@
 
 Base commit: 5e59fdf. No deployment route imports these modules. Nothing here
 opens a database driver, loads DATABASE_URL, changes authentication, applies a
-remote migration, issues credentials or pushes Git. The current browser preview
-still uses its memory store; it has not been switched to this DB API.
+remote migration, issues credentials or pushes Git. The original browser preview
+still uses its memory store. The optional independent SQL preview below now
+connects the same browser renderer to this local DB API; production is unchanged.
 
 ## Deliverables and connection status
 
@@ -141,3 +142,21 @@ Ownership transfer, real parent moves, Task/Page deletion and deletion cascades 
 still out of scope. No endpoint or migration chooses their semantics. The root
 manifest and placement rights are the short open questions needed for activation;
 this local preparation can be reviewed without answering them yet.
+
+## Independent local SQL browser preview
+
+Run `node v02/structure/db/local-server.mjs` and open http://127.0.0.1:8770/ .
+This creates a disposable PGlite database, migrates nine fictional tasks and
+serves the real DB repository/API to the browser. The identity remains a clearly
+marked synthetic editor; there is no real Google login or token. No placement
+authorization binding is supplied, so reference add/remove remains disabled.
+The preview bridge supplies Tier10 only for this synthetic demonstration and
+labels that limitation. It does not establish a production default.
+
+Verified in Chrome: add prerequisite revision5->6; reload retains it; opening
+the actual Task from its reference shows both shared prerequisites; explicitly
+unlinking the incomplete prerequisite moves revision6->7 and recalculates done.
+This validates browser -> Fetch API -> SQL transaction -> projected response,
+without remote DB or new credentials. The one embedded engine serializes local
+transactions; real multi-connection contention is still a later integration test.
+The database is discarded when the process stops.
