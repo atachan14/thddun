@@ -1,5 +1,5 @@
 export async function mountStructureBrowser(root,{fetchImpl=fetch,storageLabel='メモリ保存',dataLabel='合成データ',readOnly=false,onOpenTask}={}){
- const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;},notice=el('p','合成構造データを読み込み中…'),nav=el('nav'),body=el('section');notice.setAttribute('role','status');root.replaceChildren(notice,nav,body);let turn=0;
+ const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;},notice=el('p','ページを読み込み中…'),nav=el('nav'),body=el('section');notice.setAttribute('role','status');root.replaceChildren(notice,nav,body);let turn=0;
  const button=(label,target)=>{const b=el('button',label);b.type='button';b.onclick=()=>show(target);return b;};
  async function request(path,options){const r=await fetchImpl(path,{cache:'no-store',...options});if(!r.ok)throw Object.assign(Error('Request rejected'),{status:r.status});return r.json();}
  function paint(n,task,target,revision){const c=task.completion;n.dataset.state=c.appearance.key;n.append(el('p',c.completed?'完了':c.appearance.label));

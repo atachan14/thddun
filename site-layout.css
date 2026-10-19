@@ -16,3 +16,5 @@ header>button{flex:0 0 auto;font-size:12px;padding:5px 8px}
 
 /* Keep the two page/navigation modes within narrow toolbars. */
 body.structure-mode #diagram-mode,body.structure-mode #dashboard-mode,#structure-tasks-toggle[aria-pressed=true]{display:none}
+
+.structure-pages{overflow:auto;min-height:0;min-width:0;max-height:100%;width:100%;align-self:stretch;margin:0 auto}
