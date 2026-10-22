@@ -1,0 +1,2537 @@
+{
+  "editor": {
+    "revision": 5,
+    "actorPrincipalId": "editor",
+    "actorAccountId": "editor",
+    "stageOne": true,
+    "policyCore": true,
+    "fieldModelReady": true,
+    "assignedPlacementReady": true,
+    "lastLoginFieldReady": true,
+    "accountFormReady": true,
+    "accountPages": [
+      {
+        "fieldItems": [
+          {
+            "definitionId": "thdmn.created_at",
+            "name": "作成日",
+            "type": "datetime",
+            "builtinKey": "created_at",
+            "readonly": true,
+            "displayFormat": "date",
+            "appliesTo": null,
+            "value": "2020-01-01T00:00:00.000Z",
+            "ownRequired": false,
+            "required": false,
+            "inheritedRequired": false,
+            "forced": false,
+            "forceDescendants": false,
+            "invalid": false
+          },
+          {
+            "definitionId": "thdmn.last_login_at",
+            "name": "最終ログイン",
+            "type": "datetime",
+            "builtinKey": "last_login_at",
+            "readonly": true,
+            "displayFormat": "datetime",
+            "appliesTo": "account",
+            "value": null,
+            "ownRequired": false,
+            "required": false,
+            "inheritedRequired": false,
+            "forced": false,
+            "forceDescendants": false,
+            "invalid": false
+          },
+          {
+            "definitionId": "fixture-required",
+            "name": "Fictional required",
+            "type": "number",
+            "builtinKey": null,
+            "readonly": false,
+            "displayFormat": "date",
+            "appliesTo": null,
+            "value": 7,
+            "ownRequired": true,
+            "required": true,
+            "inheritedRequired": false,
+            "forced": false,
+            "forceDescendants": true,
+            "invalid": false
+          }
+        ],
+        "fieldInvalid": false,
+        "fieldCandidates": [
+          {
+            "id": "thdmn.created_at",
+            "name": "作成日",
+            "type": "datetime",
+            "builtinKey": "created_at",
+            "appliesTo": null,
+            "originLabel": "!thdmn",
+            "savedValue": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "thdmn.last_completed_at",
+            "name": "最終完了",
+            "type": "datetime",
+            "builtinKey": "last_completed_at",
+            "appliesTo": null,
+            "originLabel": "!thdmn",
+            "savedValue": null
+          },
+          {
+            "id": "thdmn.created_datetime",
+            "name": "作成日時",
+            "type": "datetime",
+            "builtinKey": "created_at",
+            "appliesTo": null,
+            "originLabel": "!thdmn",
+            "savedValue": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "thdmn.last_login_at",
+            "name": "最終ログイン",
+            "type": "datetime",
+            "builtinKey": "last_login_at",
+            "appliesTo": "account",
+            "originLabel": "!thdmn",
+            "savedValue": null
+          },
+          {
+            "id": "fixture-required",
+            "name": "Fictional required",
+            "type": "number",
+            "builtinKey": null,
+            "appliesTo": null,
+            "originLabel": "Fictional account page@editor",
+            "savedValue": 7
+          }
+        ],
+        "createdAt": "2020-01-01T00:00:00.000Z",
+        "lastCompletedAt": null,
+        "lastLoginAt": null,
+        "details": "",
+        "policyEntries": [
+          {
+            "permission": "manage",
+            "publicId": "editor",
+            "label": "Fictional account page",
+            "inherited": false,
+            "implicit": "owner",
+            "source": "Fictional account page"
+          }
+        ],
+        "assignedTaskIds": [
+          "task-1",
+          "task-2",
+          "task-3",
+          "task-4",
+          "task-5",
+          "task-6",
+          "task-7",
+          "task-8",
+          "task-0"
+        ],
+        "cardCompletion": {
+          "completed": false,
+          "disclosed": true
+        },
+        "cardCounts": {
+          "tasks": {
+            "done": 0,
+            "total": 1
+          },
+          "accounts": {
+            "done": 0,
+            "total": 0
+          }
+        },
+        "id": "account-page",
+        "publicId": "editor",
+        "title": "Fictional account page",
+        "parent": null,
+        "permission": "manage",
+        "capabilities": {
+          "editContent": true,
+          "createChild": true,
+          "managePolicy": true,
+          "delete": true,
+          "move": true,
+          "manageParticipants": false
+        },
+        "deletionPlan": {
+          "taskIds": [
+            "task-0"
+          ],
+          "accountIds": [
+            "account-page"
+          ],
+          "taskCount": 1,
+          "accountCount": 1,
+          "descendantCount": 1,
+          "canDelete": true,
+          "noRecovery": true,
+          "warning": "Accountを含む削除は対象Accountのログインと既存セッションを停止します。復旧手段は未登録です。最上位Accountを削除すると本人は復元できず、アクセスを失います。"
+        }
+      }
+    ],
+    "accountSuggestions": [
+      {
+        "publicId": "editor",
+        "title": "Fictional account page",
+        "pageId": "account-page"
+      }
+    ],
+    "trash": [],
+    "data": {
+      "tasks": [
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-03T04:05:06.000Z"
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": "2020-01-03T04:05:06.000Z",
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 1"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": true,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-1",
+          "publicId": "0002",
+          "title": "Fictional Task 1",
+          "details": "Fictional details 1",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "add",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": true,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "state": "done"
+            }
+          ],
+          "workStates": {
+            "editor": "done"
+          },
+          "prerequisiteIds": [
+            "task-0"
+          ],
+          "completion": {
+            "disclosed": true,
+            "completed": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "hold",
+              "label": "前提待ち"
+            }
+          }
+        },
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 2"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": true,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-2",
+          "publicId": "0003",
+          "title": "Fictional Task 2",
+          "details": "Fictional details 2",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "add",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": true,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "state": "done"
+            }
+          ],
+          "workStates": {
+            "editor": "done"
+          },
+          "prerequisiteIds": [
+            "task-3"
+          ],
+          "completion": {
+            "disclosed": true,
+            "completed": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "hold",
+              "label": "前提待ち"
+            }
+          }
+        },
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 3"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": false,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-3",
+          "publicId": "0004",
+          "title": "Fictional Task 3",
+          "details": "Fictional details 3",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "add",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": true,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor",
+            "reader"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "state": "todo"
+            },
+            {
+              "principalId": "reader",
+              "publicId": "reader",
+              "label": null,
+              "state": "done"
+            }
+          ],
+          "workStates": {
+            "editor": "todo",
+            "reader": "done"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": false,
+            "appearance": {
+              "key": "partial",
+              "label": "一部完了"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "partial",
+              "label": "一部完了"
+            }
+          }
+        },
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 4"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": true,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-4",
+          "publicId": "0005",
+          "title": "Fictional Task 4",
+          "details": "Fictional details 4",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "add",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": true,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "state": "done"
+            }
+          ],
+          "workStates": {
+            "editor": "done"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          },
+          "readiness": {
+            "satisfied": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          }
+        },
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 5"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": true,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-5",
+          "publicId": "0006",
+          "title": "Fictional Task 5",
+          "details": "Fictional details 5",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "add",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": true,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "state": "done"
+            }
+          ],
+          "workStates": {
+            "editor": "done"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          },
+          "readiness": {
+            "satisfied": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          }
+        },
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 6"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": true,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-6",
+          "publicId": "0007",
+          "title": "Fictional Task 6",
+          "details": "Fictional details 6",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "add",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": true,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "state": "done"
+            }
+          ],
+          "workStates": {
+            "editor": "done"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          },
+          "readiness": {
+            "satisfied": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          }
+        },
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 7"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": true,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 1
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-7",
+          "publicId": "0008",
+          "title": "Fictional Task 7",
+          "details": "Fictional details 7",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "add",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": true,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "state": "done"
+            }
+          ],
+          "workStates": {
+            "editor": "done"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "hold",
+              "label": "子完了待ち"
+            }
+          }
+        },
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 8"
+            },
+            {
+              "permission": "add",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": true,
+              "implicit": "assignment",
+              "source": "Fictional Task 7"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": false,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-8",
+          "publicId": "0009",
+          "title": "Fictional Task 8",
+          "details": "Fictional details 8",
+          "parentId": "task-7",
+          "parentPage": {
+            "kind": "task",
+            "id": "task-7"
+          },
+          "stageManaged": true,
+          "permission": "add",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": true,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor",
+            "outsider"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "state": "done"
+            },
+            {
+              "principalId": "outsider",
+              "publicId": "outsider",
+              "label": null,
+              "state": "todo"
+            }
+          ],
+          "workStates": {
+            "editor": "done",
+            "outsider": "todo"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": false,
+            "appearance": {
+              "key": "partial",
+              "label": "一部完了"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "partial",
+              "label": "一部完了"
+            }
+          }
+        },
+        {
+          "fieldItems": [
+            {
+              "definitionId": "legacy:14f440444a00e89fcfa0de7d27cbdac7",
+              "name": "flag",
+              "type": "boolean",
+              "builtinKey": null,
+              "readonly": false,
+              "displayFormat": "date",
+              "appliesTo": null,
+              "value": false,
+              "ownRequired": false,
+              "required": false,
+              "inheritedRequired": false,
+              "forced": false,
+              "forceDescendants": false,
+              "invalid": false
+            },
+            {
+              "definitionId": "legacy:6ac30410084de195d8fe79a33ca64686",
+              "name": "zero",
+              "type": "number",
+              "builtinKey": null,
+              "readonly": false,
+              "displayFormat": "date",
+              "appliesTo": null,
+              "value": 0,
+              "ownRequired": false,
+              "required": false,
+              "inheritedRequired": false,
+              "forced": false,
+              "forceDescendants": false,
+              "invalid": false
+            },
+            {
+              "definitionId": "legacy:d7b9d5957cddc4304f1a4f82026fc427",
+              "name": "notes",
+              "type": "json",
+              "builtinKey": null,
+              "readonly": false,
+              "displayFormat": "date",
+              "appliesTo": null,
+              "value": {
+                "text": "fictional"
+              },
+              "ownRequired": false,
+              "required": false,
+              "inheritedRequired": false,
+              "forced": false,
+              "forceDescendants": false,
+              "invalid": false
+            },
+            {
+              "definitionId": "fixture-required",
+              "name": "Fictional required",
+              "type": "number",
+              "builtinKey": null,
+              "readonly": false,
+              "displayFormat": "date",
+              "appliesTo": null,
+              "value": 0,
+              "ownRequired": false,
+              "required": true,
+              "inheritedRequired": true,
+              "forced": true,
+              "forceDescendants": false,
+              "invalid": false
+            }
+          ],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "legacy:14f440444a00e89fcfa0de7d27cbdac7",
+              "name": "flag",
+              "type": "boolean",
+              "builtinKey": null,
+              "appliesTo": null,
+              "originLabel": "Fictional Task 0#0001",
+              "savedValue": false
+            },
+            {
+              "id": "legacy:6ac30410084de195d8fe79a33ca64686",
+              "name": "zero",
+              "type": "number",
+              "builtinKey": null,
+              "appliesTo": null,
+              "originLabel": "Fictional Task 0#0001",
+              "savedValue": 0
+            },
+            {
+              "id": "legacy:d7b9d5957cddc4304f1a4f82026fc427",
+              "name": "notes",
+              "type": "json",
+              "builtinKey": null,
+              "appliesTo": null,
+              "originLabel": "Fictional Task 0#0001",
+              "savedValue": {
+                "text": "fictional"
+              }
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "fixture-required",
+              "name": "Fictional required",
+              "type": "number",
+              "builtinKey": null,
+              "appliesTo": null,
+              "originLabel": "Fictional account page@editor",
+              "savedValue": 0
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "grantKey": "6fa5135f0d779b2eadb39a134b7b30a7feacb9199c6db048951d9e792f00d44f",
+              "permission": "view",
+              "publicId": null,
+              "label": "非公開Account",
+              "inherited": false,
+              "implicit": null,
+              "source": "Fictional Task 0"
+            },
+            {
+              "permission": "add",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 0"
+            },
+            {
+              "permission": "manage",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "inherited": true,
+              "implicit": "owner",
+              "source": "Fictional account page"
+            }
+          ],
+          "customFields": {
+            "flag": false,
+            "zero": 0,
+            "notes": {
+              "text": "fictional"
+            }
+          },
+          "cardCompletion": {
+            "completed": false,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-0",
+          "publicId": "0001",
+          "title": "Fictional Task 0",
+          "details": "Fictional details 0",
+          "parentId": null,
+          "parentPage": {
+            "kind": "account",
+            "id": "account-page"
+          },
+          "stageManaged": true,
+          "permission": "manage",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": true,
+            "createChild": true,
+            "managePolicy": true,
+            "delete": true,
+            "move": true,
+            "manageParticipants": false
+          },
+          "deletionPlan": {
+            "taskIds": [
+              "task-0"
+            ],
+            "accountIds": [],
+            "taskCount": 1,
+            "accountCount": 0,
+            "descendantCount": 0,
+            "canDelete": true,
+            "noRecovery": false,
+            "warning": null
+          },
+          "assignees": [
+            "editor"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": "Fictional account page",
+              "state": "todo"
+            }
+          ],
+          "workStates": {
+            "editor": "todo"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": false,
+            "appearance": {
+              "key": "todo",
+              "label": "未着手"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "todo",
+              "label": "未着手"
+            }
+          }
+        }
+      ],
+      "users": [
+        {
+          "id": "editor",
+          "name": "Fictional editor",
+          "nameIsIdentifier": false
+        },
+        {
+          "id": "reader",
+          "name": "@reader",
+          "nameIsIdentifier": true
+        },
+        {
+          "id": "outsider",
+          "name": "@outsider",
+          "nameIsIdentifier": true
+        }
+      ],
+      "references": [
+        {
+          "id": "reference-1",
+          "taskId": "task-1",
+          "container": {
+            "kind": "account",
+            "id": "account-page"
+          }
+        },
+        {
+          "id": "reference-4",
+          "taskId": "task-4",
+          "container": {
+            "kind": "account",
+            "id": "account-page"
+          }
+        },
+        {
+          "id": "private-reference",
+          "taskId": "task-3",
+          "container": {
+            "kind": "account",
+            "id": "account-page"
+          }
+        }
+      ],
+      "placements": [
+        {
+          "parent": {
+            "kind": "account",
+            "id": "account-page"
+          },
+          "child": {
+            "kind": "task",
+            "id": "task-0"
+          },
+          "container": {
+            "kind": "account",
+            "id": "account-page"
+          },
+          "view": "drilldown",
+          "x": -120,
+          "y": 35
+        }
+      ],
+      "assignedPlacements": [],
+      "docs": [
+        {
+          "taskId": "task-1",
+          "repositoryId": "fictional-repo",
+          "path": "docs/fictional.md",
+          "commit": null
+        }
+      ]
+    }
+  },
+  "reader": {
+    "revision": 5,
+    "actorPrincipalId": "reader",
+    "actorAccountId": "reader",
+    "stageOne": true,
+    "policyCore": true,
+    "fieldModelReady": true,
+    "assignedPlacementReady": true,
+    "lastLoginFieldReady": true,
+    "accountFormReady": true,
+    "accountPages": [
+      {
+        "fieldItems": [],
+        "fieldInvalid": false,
+        "fieldCandidates": [
+          {
+            "id": "thdmn.created_at",
+            "name": "作成日",
+            "type": "datetime",
+            "builtinKey": "created_at",
+            "appliesTo": null,
+            "originLabel": "!thdmn",
+            "savedValue": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "thdmn.last_completed_at",
+            "name": "最終完了",
+            "type": "datetime",
+            "builtinKey": "last_completed_at",
+            "appliesTo": null,
+            "originLabel": "!thdmn",
+            "savedValue": null
+          },
+          {
+            "id": "thdmn.created_datetime",
+            "name": "作成日時",
+            "type": "datetime",
+            "builtinKey": "created_at",
+            "appliesTo": null,
+            "originLabel": "!thdmn",
+            "savedValue": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "thdmn.last_login_at",
+            "name": "最終ログイン",
+            "type": "datetime",
+            "builtinKey": "last_login_at",
+            "appliesTo": "account",
+            "originLabel": "!thdmn",
+            "savedValue": "2020-01-02T03:04:05.000Z"
+          }
+        ],
+        "createdAt": "2020-01-01T00:00:00.000Z",
+        "lastCompletedAt": null,
+        "lastLoginAt": "2020-01-02T03:04:05.000Z",
+        "details": "",
+        "policyEntries": [
+          {
+            "permission": "manage",
+            "publicId": "reader",
+            "label": "Fictional reader",
+            "inherited": false,
+            "implicit": "owner",
+            "source": "Fictional reader"
+          }
+        ],
+        "assignedTaskIds": [
+          "task-3"
+        ],
+        "cardCompletion": {
+          "completed": false,
+          "disclosed": true
+        },
+        "cardCounts": {
+          "tasks": {
+            "done": 0,
+            "total": 0
+          },
+          "accounts": {
+            "done": 0,
+            "total": 0
+          }
+        },
+        "id": "home-reader",
+        "publicId": "reader",
+        "title": "Fictional reader",
+        "parent": null,
+        "permission": "manage",
+        "capabilities": {
+          "editContent": true,
+          "createChild": true,
+          "managePolicy": true,
+          "delete": true,
+          "move": true,
+          "manageParticipants": false
+        },
+        "deletionPlan": {
+          "taskIds": [],
+          "accountIds": [
+            "home-reader"
+          ],
+          "taskCount": 0,
+          "accountCount": 1,
+          "descendantCount": 0,
+          "canDelete": true,
+          "noRecovery": true,
+          "warning": "Accountを含む削除は対象Accountのログインと既存セッションを停止します。復旧手段は未登録です。最上位Accountを削除すると本人は復元できず、アクセスを失います。"
+        }
+      }
+    ],
+    "accountSuggestions": [
+      {
+        "publicId": "reader",
+        "title": "Fictional reader",
+        "pageId": "home-reader"
+      }
+    ],
+    "trash": [],
+    "data": {
+      "tasks": [
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": "reader",
+              "label": "Fictional reader",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 3"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": false,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-3",
+          "publicId": "0004",
+          "title": "Fictional Task 3",
+          "details": "Fictional details 3",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "add",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": true,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor",
+            "reader"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": null,
+              "state": "todo"
+            },
+            {
+              "principalId": "reader",
+              "publicId": "reader",
+              "label": "Fictional reader",
+              "state": "done"
+            }
+          ],
+          "workStates": {
+            "editor": "todo",
+            "reader": "done"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": false,
+            "appearance": {
+              "key": "partial",
+              "label": "一部完了"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "partial",
+              "label": "一部完了"
+            }
+          }
+        },
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "grantKey": "73a68f40b90d952e1c099726e18081d88212911c87e3f73c2a76d1bd8387b911",
+              "permission": "manage",
+              "publicId": "reader",
+              "label": "Fictional reader",
+              "inherited": false,
+              "implicit": null,
+              "source": "Fictional Task 7"
+            },
+            {
+              "permission": "add",
+              "publicId": null,
+              "label": "非公開Account",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 7"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": true,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 1
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-7",
+          "publicId": "0008",
+          "title": "Fictional Task 7",
+          "details": "Fictional details 7",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "manage",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": true,
+            "createChild": true,
+            "managePolicy": true,
+            "delete": true,
+            "move": false,
+            "manageParticipants": false
+          },
+          "deletionPlan": {
+            "taskIds": [
+              "task-7",
+              "task-8"
+            ],
+            "accountIds": [],
+            "taskCount": 2,
+            "accountCount": 0,
+            "descendantCount": 1,
+            "canDelete": true,
+            "noRecovery": false,
+            "warning": null
+          },
+          "assignees": [
+            "editor"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": null,
+              "state": "done"
+            }
+          ],
+          "workStates": {
+            "editor": "done"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "hold",
+              "label": "子完了待ち"
+            }
+          }
+        },
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": null,
+              "label": "非公開Account",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 8"
+            },
+            {
+              "permission": "add",
+              "publicId": null,
+              "label": "非公開Account",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 8"
+            },
+            {
+              "permission": "manage",
+              "publicId": "reader",
+              "label": "Fictional reader",
+              "inherited": true,
+              "implicit": null,
+              "source": "Fictional Task 7"
+            },
+            {
+              "permission": "add",
+              "publicId": null,
+              "label": "非公開Account",
+              "inherited": true,
+              "implicit": "assignment",
+              "source": "Fictional Task 7"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": false,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-8",
+          "publicId": "0009",
+          "title": "Fictional Task 8",
+          "details": "Fictional details 8",
+          "parentId": "task-7",
+          "parentPage": {
+            "kind": "task",
+            "id": "task-7"
+          },
+          "stageManaged": true,
+          "permission": "manage",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": true,
+            "createChild": true,
+            "managePolicy": true,
+            "delete": true,
+            "move": true,
+            "manageParticipants": false
+          },
+          "deletionPlan": {
+            "taskIds": [
+              "task-8"
+            ],
+            "accountIds": [],
+            "taskCount": 1,
+            "accountCount": 0,
+            "descendantCount": 0,
+            "canDelete": true,
+            "noRecovery": false,
+            "warning": null
+          },
+          "assignees": [
+            "editor",
+            "outsider"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": null,
+              "state": "done"
+            },
+            {
+              "principalId": "outsider",
+              "publicId": "outsider",
+              "label": null,
+              "state": "todo"
+            }
+          ],
+          "workStates": {
+            "editor": "done",
+            "outsider": "todo"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": false,
+            "appearance": {
+              "key": "partial",
+              "label": "一部完了"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "partial",
+              "label": "一部完了"
+            }
+          }
+        },
+        {
+          "fieldItems": [
+            {
+              "definitionId": "legacy:14f440444a00e89fcfa0de7d27cbdac7",
+              "name": "flag",
+              "type": "boolean",
+              "builtinKey": null,
+              "readonly": false,
+              "displayFormat": "date",
+              "appliesTo": null,
+              "value": false,
+              "ownRequired": false,
+              "required": false,
+              "inheritedRequired": false,
+              "forced": false,
+              "forceDescendants": false,
+              "invalid": false
+            },
+            {
+              "definitionId": "legacy:6ac30410084de195d8fe79a33ca64686",
+              "name": "zero",
+              "type": "number",
+              "builtinKey": null,
+              "readonly": false,
+              "displayFormat": "date",
+              "appliesTo": null,
+              "value": 0,
+              "ownRequired": false,
+              "required": false,
+              "inheritedRequired": false,
+              "forced": false,
+              "forceDescendants": false,
+              "invalid": false
+            },
+            {
+              "definitionId": "legacy:d7b9d5957cddc4304f1a4f82026fc427",
+              "name": "notes",
+              "type": "json",
+              "builtinKey": null,
+              "readonly": false,
+              "displayFormat": "date",
+              "appliesTo": null,
+              "value": {
+                "text": "fictional"
+              },
+              "ownRequired": false,
+              "required": false,
+              "inheritedRequired": false,
+              "forced": false,
+              "forceDescendants": false,
+              "invalid": false
+            },
+            {
+              "definitionId": "fixture-required",
+              "name": "Fictional required",
+              "type": "number",
+              "builtinKey": null,
+              "readonly": false,
+              "displayFormat": "date",
+              "appliesTo": null,
+              "value": 0,
+              "ownRequired": false,
+              "required": true,
+              "inheritedRequired": true,
+              "forced": true,
+              "forceDescendants": false,
+              "invalid": false
+            }
+          ],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "legacy:14f440444a00e89fcfa0de7d27cbdac7",
+              "name": "flag",
+              "type": "boolean",
+              "builtinKey": null,
+              "appliesTo": null,
+              "originLabel": "Fictional Task 0#0001",
+              "savedValue": false
+            },
+            {
+              "id": "legacy:6ac30410084de195d8fe79a33ca64686",
+              "name": "zero",
+              "type": "number",
+              "builtinKey": null,
+              "appliesTo": null,
+              "originLabel": "Fictional Task 0#0001",
+              "savedValue": 0
+            },
+            {
+              "id": "legacy:d7b9d5957cddc4304f1a4f82026fc427",
+              "name": "notes",
+              "type": "json",
+              "builtinKey": null,
+              "appliesTo": null,
+              "originLabel": "Fictional Task 0#0001",
+              "savedValue": {
+                "text": "fictional"
+              }
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "fixture-required",
+              "name": "Fictional required",
+              "type": "number",
+              "builtinKey": null,
+              "appliesTo": null,
+              "originLabel": null,
+              "savedValue": 0
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "view",
+              "publicId": "reader",
+              "label": "Fictional reader",
+              "inherited": false,
+              "implicit": null,
+              "source": "Fictional Task 0"
+            }
+          ],
+          "customFields": {
+            "flag": false,
+            "zero": 0,
+            "notes": {
+              "text": "fictional"
+            }
+          },
+          "cardCompletion": {
+            "completed": false,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-0",
+          "publicId": "0001",
+          "title": "Fictional Task 0",
+          "details": "Fictional details 0",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "view",
+          "sharedRoot": true,
+          "capabilities": {
+            "editContent": false,
+            "createChild": false,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": null,
+              "state": "todo"
+            }
+          ],
+          "workStates": {
+            "editor": "todo"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": false,
+            "appearance": {
+              "key": "todo",
+              "label": "未着手"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "todo",
+              "label": "未着手"
+            }
+          }
+        }
+      ],
+      "users": [
+        {
+          "id": "editor",
+          "name": "@editor",
+          "nameIsIdentifier": true
+        },
+        {
+          "id": "reader",
+          "name": "Fictional reader",
+          "nameIsIdentifier": false
+        },
+        {
+          "id": "outsider",
+          "name": "@outsider",
+          "nameIsIdentifier": true
+        }
+      ],
+      "references": [],
+      "placements": [],
+      "assignedPlacements": [],
+      "docs": []
+    }
+  },
+  "outsider": {
+    "revision": 5,
+    "actorPrincipalId": "outsider",
+    "actorAccountId": "outsider",
+    "stageOne": true,
+    "policyCore": true,
+    "fieldModelReady": true,
+    "assignedPlacementReady": true,
+    "lastLoginFieldReady": true,
+    "accountFormReady": true,
+    "accountPages": [
+      {
+        "fieldItems": [],
+        "fieldInvalid": false,
+        "fieldCandidates": [
+          {
+            "id": "thdmn.created_at",
+            "name": "作成日",
+            "type": "datetime",
+            "builtinKey": "created_at",
+            "appliesTo": null,
+            "originLabel": "!thdmn",
+            "savedValue": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "thdmn.last_completed_at",
+            "name": "最終完了",
+            "type": "datetime",
+            "builtinKey": "last_completed_at",
+            "appliesTo": null,
+            "originLabel": "!thdmn",
+            "savedValue": null
+          },
+          {
+            "id": "thdmn.created_datetime",
+            "name": "作成日時",
+            "type": "datetime",
+            "builtinKey": "created_at",
+            "appliesTo": null,
+            "originLabel": "!thdmn",
+            "savedValue": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "thdmn.last_login_at",
+            "name": "最終ログイン",
+            "type": "datetime",
+            "builtinKey": "last_login_at",
+            "appliesTo": "account",
+            "originLabel": "!thdmn",
+            "savedValue": null
+          }
+        ],
+        "createdAt": "2020-01-01T00:00:00.000Z",
+        "lastCompletedAt": null,
+        "lastLoginAt": null,
+        "details": "",
+        "policyEntries": [
+          {
+            "permission": "manage",
+            "publicId": "outsider",
+            "label": "Fictional outsider",
+            "inherited": false,
+            "implicit": "owner",
+            "source": "Fictional outsider"
+          }
+        ],
+        "assignedTaskIds": [
+          "task-8"
+        ],
+        "cardCompletion": {
+          "completed": false,
+          "disclosed": true
+        },
+        "cardCounts": {
+          "tasks": {
+            "done": 0,
+            "total": 0
+          },
+          "accounts": {
+            "done": 0,
+            "total": 0
+          }
+        },
+        "id": "home-outsider",
+        "publicId": "outsider",
+        "title": "Fictional outsider",
+        "parent": null,
+        "permission": "manage",
+        "capabilities": {
+          "editContent": true,
+          "createChild": true,
+          "managePolicy": true,
+          "delete": true,
+          "move": true,
+          "manageParticipants": false
+        },
+        "deletionPlan": {
+          "taskIds": [],
+          "accountIds": [
+            "home-outsider"
+          ],
+          "taskCount": 0,
+          "accountCount": 1,
+          "descendantCount": 0,
+          "canDelete": true,
+          "noRecovery": true,
+          "warning": "Accountを含む削除は対象Accountのログインと既存セッションを停止します。復旧手段は未登録です。最上位Accountを削除すると本人は復元できず、アクセスを失います。"
+        }
+      }
+    ],
+    "accountSuggestions": [
+      {
+        "publicId": "outsider",
+        "title": "Fictional outsider",
+        "pageId": "home-outsider"
+      }
+    ],
+    "trash": [],
+    "data": {
+      "tasks": [
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "view",
+              "publicId": "outsider",
+              "label": "Fictional outsider",
+              "inherited": false,
+              "implicit": null,
+              "source": "Fictional Task 4"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": true,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-4",
+          "publicId": "0005",
+          "title": "Fictional Task 4",
+          "details": "Fictional details 4",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "view",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": false,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": null,
+              "state": "done"
+            }
+          ],
+          "workStates": {
+            "editor": "done"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          },
+          "readiness": {
+            "satisfied": true,
+            "appearance": {
+              "key": "done",
+              "label": "完了"
+            }
+          }
+        },
+        {
+          "fieldItems": [],
+          "fieldInvalid": false,
+          "fieldCandidates": [
+            {
+              "id": "thdmn.created_at",
+              "name": "作成日",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            },
+            {
+              "id": "thdmn.last_completed_at",
+              "name": "最終完了",
+              "type": "datetime",
+              "builtinKey": "last_completed_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": null
+            },
+            {
+              "id": "thdmn.created_datetime",
+              "name": "作成日時",
+              "type": "datetime",
+              "builtinKey": "created_at",
+              "appliesTo": null,
+              "originLabel": "!thdmn",
+              "savedValue": "2020-01-01T00:00:00.000Z"
+            }
+          ],
+          "createdAt": "2020-01-01T00:00:00.000Z",
+          "lastCompletedAt": null,
+          "lastLoginAt": null,
+          "policyEntries": [
+            {
+              "permission": "add",
+              "publicId": "outsider",
+              "label": "Fictional outsider",
+              "inherited": false,
+              "implicit": "assignment",
+              "source": "Fictional Task 8"
+            }
+          ],
+          "customFields": {},
+          "cardCompletion": {
+            "completed": false,
+            "disclosed": true
+          },
+          "cardCounts": {
+            "tasks": {
+              "done": 0,
+              "total": 0
+            },
+            "accounts": {
+              "done": 0,
+              "total": 0
+            }
+          },
+          "id": "task-8",
+          "publicId": "0009",
+          "title": "Fictional Task 8",
+          "details": "Fictional details 8",
+          "parentId": null,
+          "parentPage": null,
+          "stageManaged": true,
+          "permission": "add",
+          "sharedRoot": false,
+          "capabilities": {
+            "editContent": false,
+            "createChild": true,
+            "managePolicy": false,
+            "delete": false,
+            "move": false,
+            "manageParticipants": false
+          },
+          "assignees": [
+            "editor",
+            "outsider"
+          ],
+          "assigneeEntries": [
+            {
+              "principalId": "editor",
+              "publicId": "editor",
+              "label": null,
+              "state": "done"
+            },
+            {
+              "principalId": "outsider",
+              "publicId": "outsider",
+              "label": "Fictional outsider",
+              "state": "todo"
+            }
+          ],
+          "workStates": {
+            "editor": "done",
+            "outsider": "todo"
+          },
+          "prerequisiteIds": [],
+          "completion": {
+            "disclosed": true,
+            "completed": false,
+            "appearance": {
+              "key": "partial",
+              "label": "一部完了"
+            }
+          },
+          "readiness": {
+            "satisfied": false,
+            "appearance": {
+              "key": "partial",
+              "label": "一部完了"
+            }
+          }
+        }
+      ],
+      "users": [
+        {
+          "id": "editor",
+          "name": "@editor",
+          "nameIsIdentifier": true
+        },
+        {
+          "id": "outsider",
+          "name": "Fictional hidden colleague",
+          "nameIsIdentifier": false
+        }
+      ],
+      "references": [],
+      "placements": [],
+      "assignedPlacements": [],
+      "docs": []
+    }
+  }
+}

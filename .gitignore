@@ -376,3 +376,12 @@
 /v02/http/*
 !/v02/http/node-adapter.mjs
 !/v02/http/node-adapter-test.mjs
+
+# Deterministic synthetic DTO contract, captured before extraction.
+!/v02/local-auth/snapshot-contract-fixture.mjs
+!/v02/local-auth/snapshot-contract-test.mjs
+!/v02/local-auth/snapshot-contract.expected.json
+
+# Separated policy projection and SQL storage boundaries.
+!/v02/local-auth/policy-snapshot.mjs
+!/v02/local-auth/field-store.mjs
