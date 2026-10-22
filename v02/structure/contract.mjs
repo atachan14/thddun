@@ -54,10 +54,10 @@ export function projectPage(model,context,target,access){
  for(let p=target;p;){if(!readable(p)){boundary=true;break;}const x=find(p);breadcrumb.unshift({...p,title:x.title});p=p.kind==='task'?x.parent:null;}
  const visible=model.tasks.filter(t=>readable({kind:'task',id:t.id})),visibleIds=new Set(visible.map(t=>t.id));
  const dependencies=effectiveDependencies(model),computed=deriveCompletion(model,dependencies);
- const describe=id=>{const c=computed.get(id),incoming=dependencies.filter(e=>e.taskId===id),hiddenPending=incoming.some(e=>!visibleIds.has(e.prerequisiteTaskId)&&!computed.get(e.prerequisiteTaskId).completed);
+ const describe=id=>{const c=computed.get(id),incoming=dependencies.filter(e=>e.taskId===id),hiddenPending=incoming.some(e=>!visibleIds.has(e.prerequisiteTaskId)&&!computed.get(e.prerequisiteTaskId).readiness.satisfied);
   // Hidden prerequisite identities, counts, origin placements and internal state never leave this projection.
-  const completion={disclosed:true,completed:c.completed,appearance:{key:c.appearance.key,label:hiddenPending?'前提待ち':c.appearance.label}};
-  return{completion,effectivePrerequisites:incoming.filter(e=>visibleIds.has(e.prerequisiteTaskId)).map(e=>({id:e.id,taskId:e.prerequisiteTaskId,title:model.tasks.find(t=>t.id===e.prerequisiteTaskId).title,canRemove:access.canEditTask?.(context,id)===true})),canEdit:access.canEditTask?.(context,id)===true};};
+  const completion={disclosed:true,completed:c.completed,appearance:{key:c.appearance.key,label:c.appearance.label}};
+  const readiness={satisfied:c.readiness.satisfied,appearance:{key:c.readiness.appearance.key,label:hiddenPending?'前提待ち':c.readiness.appearance.label}};return{completion,readiness,effectivePrerequisites:incoming.filter(e=>visibleIds.has(e.prerequisiteTaskId)).map(e=>({id:e.id,taskId:e.prerequisiteTaskId,title:model.tasks.find(t=>t.id===e.prerequisiteTaskId).title,canRemove:access.canEditTask?.(context,id)===true})),canEdit:access.canEditTask?.(context,id)===true};};
  const entries=entriesForPage(model,target).filter(x=>visibleIds.has(x.taskId)).map(x=>({...x,...describe(x.taskId),canRemoveReference:x.kind==='reference'&&access.canRemoveReference?.(context,x.referenceId)===true})),entryIds=new Set(entries.map(x=>x.entryId));
  return{revision:model.revision||0,page:{...target,title:item.title},breadcrumbs:breadcrumb,breadcrumbBoundary:boundary,entries,prerequisites:model.dependencyEdges.filter(e=>samePage(e.container,target)&&entryIds.has(e.fromEntryId)&&entryIds.has(e.toEntryId)).map(e=>({id:e.id,fromEntryId:e.fromEntryId,toEntryId:e.toEntryId})),pageTask:target.kind==='task'?describe(target.id):null,completionSemantics:'shared-entity'};
 }

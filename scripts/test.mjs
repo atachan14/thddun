@@ -1,19 +1,7 @@
-import { spawnSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
-const root = fileURLToPath(new URL('../', import.meta.url));
-const tests = [
-  'test.mjs', 'v02/foundation-test.mjs', 'v02/api-contract-test.mjs',
-  'v02/postgres-contract-test.mjs', 'v02/principal-authorization-test.mjs',
-  'v02/creation-contract-test.mjs', 'v02/creation-cli-test.mjs',
-  'v02/cli/content-contract-test.mjs', 'v02/cli/readiness-test.mjs', 'v02/auth/auth-test.mjs',
-  'v02/auth/session-test.mjs', 'v02/auth/sdk-contract-test.mjs',
-  'v02/trial/application-test.mjs', 'v02/trial/node-handler-test.mjs', 'v02/trial/deployment-host-test.mjs',
-  'v02/ui/create-client-test.mjs', 'v02/ui/integration-test.mjs', 'v02/ui/timing-test.mjs',
-  'v02/ui/safety-test.mjs', 'v02/ui/sql-review-test.mjs', 'v02/structure/contract-test.mjs', 'v02/structure/shared-dependency-test.mjs', 'v02/structure/lifetime-test.mjs', 'v02/public-demo/test.mjs', 'scripts/build-test.mjs'
-];
-for (const test of tests) {
-  const result = spawnSync(process.execPath, [test], { cwd: root, stdio: 'inherit', windowsHide: true });
-  if (result.error) throw result.error;
-  if (result.status !== 0) process.exit(result.status || 1);
-}
-console.log(`PASS ${tests.length} test programs; fictional data and loopback only.`);
+import{spawnSync}from'node:child_process';import fs from'node:fs';import path from'node:path';import{fileURLToPath}from'node:url';
+const root=fileURLToPath(new URL('../',import.meta.url));
+// Include new local policy/UI regressions automatically. Tests never fall back to a remote DB.
+function discover(directory){return fs.readdirSync(path.join(root,directory),{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?discover(directory+'/'+entry.name):entry.name.endsWith('test.mjs')?[directory+'/'+entry.name]:[]);}
+const tests=['test.mjs',...discover('v02').sort(),'scripts/build-test.mjs'];
+for(const test of tests){const result=spawnSync(process.execPath,[test],{cwd:root,stdio:'inherit',windowsHide:true});if(result.error)throw result.error;if(result.status!==0)process.exit(result.status||1);}
+console.log('PASS '+tests.length+' test programs; fictional data and loopback only.');

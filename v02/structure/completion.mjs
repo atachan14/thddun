@@ -1,13 +1,3 @@
-import{taskAppearance}from'../../task-appearance.mjs';
-// Pure derived result. Never changes assignee work states or creates reference-local states.
-export function deriveCompletion(model,dependencies){
- const byId=new Map(model.tasks.map(t=>[t.id,t])),memo=new Map();
- function visit(id){if(memo.has(id))return memo.get(id);const t=byId.get(id),kids=model.tasks.filter(x=>x.parent.kind==='task'&&x.parent.id===id).map(x=>visit(x.id)),prerequisiteIds=dependencies.filter(x=>x.taskId===id).map(x=>x.prerequisiteTaskId),prerequisites=prerequisiteIds.map(visit),assignees=t.assignees||[],states=t.workStates||{};
-  const ownDone=assignees.length>0&&assignees.every(u=>states[u]==='done'),childrenDone=kids.every(x=>x.completed),prerequisitesSatisfied=prerequisites.every(x=>x.completed);
-  const intrinsic=taskAppearance({workStates:Object.fromEntries(assignees.map(u=>[u,{state:states[u]||'todo'}]))},assignees,kids.map(x=>({state:x.completed?'done':x.appearance.key})));
-  // Shared prerequisite waiting uses the same hold appearance; stored work states stay unchanged.
-  const appearance=intrinsic.key==='done'&&!prerequisitesSatisfied?{...intrinsic,key:'hold',label:'前提待ち'}:intrinsic;
-  const value={disclosed:true,ownDone,childrenDone,prerequisitesSatisfied,completed:ownDone&&childrenDone&&prerequisitesSatisfied,appearance};memo.set(id,value);return value;
- }
- for(const t of model.tasks)visit(t.id);return memo;
-}
+import{taskAppearance}from'../../task-appearance.mjs';import{isTaskComplete}from'../task-completion.mjs';
+// Completion is assignee-only. Preserve the former recursive gate as independent readiness.
+export function deriveCompletion(model,dependencies){const byId=new Map(model.tasks.map(t=>[t.id,t])),memo=new Map(),active=new Set();function visit(id){if(memo.has(id))return memo.get(id);if(active.has(id))throw Error('Readiness cycle');active.add(id);const t=byId.get(id),kids=model.tasks.filter(x=>x.parent.kind==='task'&&x.parent.id===id).map(x=>visit(x.id)),prerequisites=dependencies.filter(x=>x.taskId===id).map(x=>visit(x.prerequisiteTaskId)),assignees=t.assignees||[],states=t.workStates||{},ownDone=isTaskComplete(t),childrenDone=kids.every(x=>x.readiness.satisfied),prerequisitesSatisfied=prerequisites.every(x=>x.readiness.satisfied),appearanceTask={workStates:Object.fromEntries(assignees.map(u=>[u,{state:states[u]||'todo'}]))},appearance=taskAppearance(appearanceTask,assignees,[]),intrinsic=taskAppearance(appearanceTask,assignees,kids.map(x=>({state:x.readiness.satisfied?'done':x.readiness.appearance.key}))),readyAppearance=intrinsic.key==='done'&&!prerequisitesSatisfied?{...intrinsic,key:'hold',label:'前提待ち'}:intrinsic,value={disclosed:true,ownDone,completed:ownDone,appearance,childrenDone,prerequisitesSatisfied,readiness:{satisfied:ownDone&&childrenDone&&prerequisitesSatisfied,appearance:readyAppearance}};active.delete(id);memo.set(id,value);return value;}for(const t of model.tasks)visit(t.id);return memo;}

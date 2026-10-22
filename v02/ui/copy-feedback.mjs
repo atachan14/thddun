@@ -1,0 +1,1 @@
+export async function copyPublicId(action,text,write,schedule=setTimeout){try{await write(text);action.textContent='コピーしました';schedule(()=>{if(action.isConnected)action.textContent='クリックでコピー';},1800);return true;}catch{action.textContent='コピーできませんでした';return false;}}

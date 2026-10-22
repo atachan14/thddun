@@ -1,8 +1,9 @@
 // Orthogonal visibility-grid A*. Obstacles represent card content, never hierarchy edges.
 export function routeOrthogonal(start,end,obstacles,width,height){
   const round=n=>Math.round(n*10)/10;
-  const xs=[...new Set([0,width,start.x,end.x,...obstacles.flatMap(r=>[r.left,r.right])].map(round))].filter(x=>x>=0&&x<=width).sort((a,b)=>a-b);
-  const ys=[...new Set([0,height,start.y,end.y,...obstacles.flatMap(r=>[r.top,r.bottom])].map(round))].filter(y=>y>=0&&y<=height).sort((a,b)=>a-b);
+  const minX=Math.min(0,start.x,end.x,...obstacles.map(r=>r.left))-20,minY=Math.min(0,start.y,end.y,...obstacles.map(r=>r.top))-20;
+  const xs=[minX,...new Set([0,width,start.x,end.x,...obstacles.flatMap(r=>[r.left,r.right])].map(round))].filter(x=>x>=minX&&x<=width).sort((a,b)=>a-b);
+  const ys=[minY,...new Set([0,height,start.y,end.y,...obstacles.flatMap(r=>[r.top,r.bottom])].map(round))].filter(y=>y>=minY&&y<=height).sort((a,b)=>a-b);
   const blocked=(a,b)=>obstacles.some(r=>a.x===b.x?a.x>r.left+.01&&a.x<r.right-.01&&Math.max(a.y,b.y)>r.top+.01&&Math.min(a.y,b.y)<r.bottom-.01:a.y>r.top+.01&&a.y<r.bottom-.01&&Math.max(a.x,b.x)>r.left+.01&&Math.min(a.x,b.x)<r.right-.01);
   const sx=xs.indexOf(round(start.x)),sy=ys.indexOf(round(start.y)),ex=xs.indexOf(round(end.x)),ey=ys.indexOf(round(end.y));
   const key=(x,y,d)=>`${x},${y},${d}`,heap=[];

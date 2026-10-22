@@ -1,0 +1,40 @@
+import assert from'node:assert/strict';
+import fs from'node:fs/promises';
+import{openTestDatabase,legacyFixture,migrate,localPool,captureLegacy}from'../structure/db/test-support.mjs';
+import{StageRepository}from'./repository.mjs';import{stageApi}from'./api.mjs';
+const db=await openTestDatabase();
+try{
+await legacyFixture(db);await migrate(db);const before=await captureLegacy(db);await db.exec(await fs.readFile(new URL('003-stage-one.sql',import.meta.url),'utf8'));assert.deepEqual(await captureLegacy(db),before);
+await db.query("INSERT INTO account_page_owners(workspace_id,page_id,principal_id) VALUES('fixture','account-page','editor')");
+await db.exec("INSERT INTO accounts VALUES('account-outsider','verified-outsider','Outsider',false);INSERT INTO principals(id,kind,display_name,account_id) VALUES('outsider','human','Outsider','account-outsider');INSERT INTO principal_permissions VALUES('fixture','outsider','tasks:read'),('fixture','outsider','tasks:write');");
+const pool=localPool(db),ctx=id=>({subjectId:id,principalKind:'human',identitySubjectId:'verified-'+id,workspaceIds:['fixture'],scopes:['tasks:read','tasks:write'],csrfVerified:true});let actor='editor';
+const repo=new StageRepository(pool),api=stageApi({repository:repo,authenticate:async()=>actor?ctx(actor):null,allowedOrigins:new Set(['https://fixture.invalid'])});
+const get=path=>api(new Request('https://fixture.invalid/api/v02/'+path+'?workspace=fixture'));
+const post=input=>api(new Request('https://fixture.invalid/api/v02/commands',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(input)}));
+const create=(id,parent)=>({type:'createPageTask',id,parent,name:id,details:'durable local test'});
+let rev=5;const command=(command,operationId='operation-'+crypto.randomUUID())=>({workspaceId:'fixture',operationId,expectedRevision:rev,command});
+let own=await(await get('self')).json();assert.equal(own.page.id,'account-page');
+const root=command(create('production-root',{kind:'account',id:'account-page'}));assert.equal((await post(root)).status,200);rev++;
+const child=command(create('existing-child',{kind:'task',id:'production-root'}));assert.equal((await post(child)).status,200);rev++;
+const grant=command({type:'addParticipant',taskId:'production-root',principalId:'reader'});assert.equal((await post(grant)).status,200);rev++;assert.equal((await(await post(grant)).json()).replayed,true);
+actor='reader';assert.equal((await(await get('self')).json()).page,null);assert.equal((await get('structure/pages/task/existing-child')).status,200);
+assert.equal((await post(command({type:'patchTask',taskId:'existing-child',patch:{name:'participant edit'}}))).status,200);rev++;
+const nested=command(create('nested-child',{kind:'task',id:'existing-child'}));assert.equal((await post(nested)).status,200);rev++;assert.equal((await(await post(nested)).json()).replayed,true);
+assert.equal((await post(command({type:'addParticipant',taskId:'nested-child',principalId:'outsider'}))).status,403);
+assert.equal((await post(command({type:'setMyState',taskId:'existing-child',state:'done'}))).status,403);
+assert.equal((await get('structure/pages/account/account-page')).status,404);
+let snapshot=await(await get('snapshot')).json();assert(snapshot.data.tasks.find(t=>t.id==='nested-child'));assert(!snapshot.data.tasks.find(t=>t.id==='nested-child').capabilities.manageParticipants);
+await db.exec("INSERT INTO memberships VALUES('group-page','outsider'),('account-page','outsider');");actor='outsider';assert.equal((await get('structure/pages/task/production-root')).status,404);assert.equal((await post(command({type:'patchTask',taskId:'nested-child',patch:{name:'no'}}))).status,404);assert.equal((await post(command(create('forbidden',{kind:'task',id:'production-root'})))).status,404);assert(!(await(await get('snapshot')).json()).data.tasks.some(t=>t.id==='production-root'));
+await db.query('DELETE FROM memberships WHERE principal_id=$1',['outsider']);actor='editor';const loaded=new StageRepository(pool);snapshot=await loaded.snapshot(ctx('editor'),'fixture');assert.equal(snapshot.data.tasks.find(t=>t.id==='existing-child').title,'participant edit');assert(snapshot.data.tasks.find(t=>t.id==='nested-child').capabilities.manageParticipants);
+const page=await loaded.read(ctx('editor'),'fixture',{kind:'account',id:'account-page'});assert(page.entries.some(e=>e.taskId==='production-root'));assert(!page.entries.some(e=>e.taskId==='nested-child'));
+assert.equal((await post({...command(create('stale',{kind:'task',id:'production-root'})),expectedRevision:5})).status,409);
+assert.equal((await post({...root,command:{...root.command,name:'changed replay'}})).status,409);
+// Existing policy/Tier tables remain byte-for-byte equal after all operations.
+const after=await captureLegacy(db);for(const table of ['task_policy','task_participants','task_child_rules','task_parent_tiers','task_dependencies','memberships'])assert.deepEqual(after[table],before[table]);
+actor='reader';await db.query("DELETE FROM stage_task_members WHERE task_id='production-root' AND principal_id='reader'");assert.equal((await post(nested)).status,404);assert.equal((await get('structure/pages/task/nested-child')).status,404);
+actor='editor';assert.equal((await post(command({type:'addParticipant',taskId:'production-root',principalId:'does-not-exist'}))).status,404);assert.equal((await post(command({type:'addParticipant',taskId:'task-1',principalId:'reader'}))).status,403);
+actor='editor';const atomic=command(create('atomic-failure',{kind:'account',id:'account-page'}));await db.exec("CREATE FUNCTION stage_fail_audit() RETURNS trigger LANGUAGE plpgsql AS $body$ BEGIN RAISE EXCEPTION 'fixture audit failure'; END $body$; CREATE TRIGGER stage_fail BEFORE INSERT ON audit FOR EACH ROW EXECUTE FUNCTION stage_fail_audit();");assert.equal((await post(atomic)).status,503);assert.equal((await db.query("SELECT id FROM tasks WHERE id='atomic-failure'")).rows.length,0);assert.equal((await db.query("SELECT task_id FROM structure_parents WHERE task_id='atomic-failure'")).rows.length,0);assert.equal((await db.query('SELECT operation_id FROM operations WHERE operation_id=$1',[atomic.operationId])).rows.length,0);assert.equal((await db.query("SELECT revision FROM workspace_revisions WHERE workspace_id='fixture'")).rows[0].revision,rev);await db.exec('DROP TRIGGER stage_fail ON audit; DROP FUNCTION stage_fail_audit();');
+const csrfApi=stageApi({repository:repo,authenticate:async()=>({...ctx('editor'),csrfVerified:false}),allowedOrigins:new Set(['https://fixture.invalid'])});assert.equal((await csrfApi(new Request('https://fixture.invalid/api/v02/commands',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(atomic)}))).status,403);assert.equal((await api(new Request('https://fixture.invalid/api/v02/self?workspace=fixture',{headers:{Origin:'https://foreign.invalid'}}))).status,403);
+actor=null;assert.equal((await get('self')).status,401);
+console.log('PASS local SQL: additive preservation, own mapping, Account root, nested creation, persistence/repository reopen, ancestor participation, outsider denial, owner-only invitations, assignment separation, idempotency, stale revision, anonymous denial. Synthetic identity only.');
+}finally{await db.close();}

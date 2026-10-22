@@ -1,0 +1,1 @@
+BEGIN;SET LOCAL search_path=thdmn_v02_trial,pg_catalog;ALTER TABLE local_card_positions DROP CONSTRAINT local_card_positions_x_check,DROP CONSTRAINT local_card_positions_y_check;ALTER TABLE local_card_positions ADD CHECK(x>=-100000 AND x<=100000),ADD CHECK(y>=-100000 AND y<=100000);INSERT INTO structure_migrations(version) VALUES('010-signed-card-positions');COMMIT;

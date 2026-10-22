@@ -1,0 +1,7 @@
+// Local preview compatibility with host-shared cookies from other loopback apps.
+// This is a finite parser ceiling, not an authentication or body-size relaxation.
+export const LOCAL_HEADER_LIMIT=64*1024;
+const ownCookies=new Set(['thdmn_local_session','thdmn_local_csrf']);
+export function localApplicationHeaders(headers){const clean={...headers};if(typeof clean.cookie==='string'){const pairs=clean.cookie.split(';').map(p=>p.trim()).filter(p=>ownCookies.has(p.slice(0,p.indexOf('='))));if(pairs.length)clean.cookie=pairs.join('; ');else delete clean.cookie;}return clean;}
+export function headerSizeSummary(rawHeaders){let bytes=0,cookieBytes=0,cookiePairs=0;for(let i=0;i<rawHeaders.length;i+=2){const name=rawHeaders[i],value=rawHeaders[i+1]||'';bytes+=Buffer.byteLength(name)+Buffer.byteLength(value)+4;if(name.toLowerCase()==='cookie'){cookieBytes+=Buffer.byteLength(value);cookiePairs+=value?value.split(';').length:0;}}return{headerBytes:bytes,cookieBytes,cookiePairs};}
+export function attachHeaderDiagnostics(server,log=console.error){server.on('clientError',(error,socket)=>{if(error.code!=='HPE_HEADER_OVERFLOW')return socket.destroy();log(JSON.stringify({event:'local_header_overflow',limitBytes:LOCAL_HEADER_LIMIT,packetBytes:error.rawPacket?.length||0}));if(socket.writable)socket.end('HTTP/1.1 431 Request Header Fields Too Large\r\nConnection: close\r\nContent-Length: 0\r\n\r\n');else socket.destroy();});}

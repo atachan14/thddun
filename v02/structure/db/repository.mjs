@@ -55,4 +55,4 @@ export class PostgresStructureRepository{
  });}catch(error){if(error.code==='23505')throw new StructureError(409,'Structure conflict');if(['40001','40P01'].includes(error.code))throw new StructureError(409,'Concurrent update');throw error;}}
 }
 
-export async function projectStructureSnapshot(client,data,context,workspaceId){const{model}=await loadStructure(client,workspaceId,data),access=structureAccess(data,model,context),visible=visibleSnapshot(data,context);for(const task of visible.tasks)task.completion=projectPage(model,context,{kind:'task',id:task.id},access).pageTask.completion;return visible;}
+export async function projectStructureSnapshot(client,data,context,workspaceId){const{model}=await loadStructure(client,workspaceId,data),access=structureAccess(data,model,context),visible=visibleSnapshot(data,context);for(const task of visible.tasks){const projected=projectPage(model,context,{kind:'task',id:task.id},access).pageTask;task.completion=projected.completion;task.readiness=projected.readiness;}return visible;}

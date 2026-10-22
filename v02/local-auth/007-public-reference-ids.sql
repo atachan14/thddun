@@ -1,0 +1,10 @@
+BEGIN;
+SET LOCAL search_path=thdmn_v02_trial,pg_catalog;
+CREATE SEQUENCE local_public_account_seq AS bigint START 1 NO CYCLE;
+CREATE SEQUENCE local_public_task_seq AS bigint START 1 NO CYCLE;
+CREATE TABLE local_public_ids(kind text NOT NULL CHECK(kind IN('account','task')),entity_id text NOT NULL,public_id text NOT NULL UNIQUE CHECK(public_id ~ '^[at][1-9][0-9]*$'),PRIMARY KEY(kind,entity_id),CHECK(left(public_id,1)=CASE kind WHEN 'account' THEN 'a' ELSE 't' END));
+CREATE FUNCTION protect_public_ids() RETURNS trigger LANGUAGE plpgsql AS $body$ BEGIN RAISE EXCEPTION 'Public reference IDs are immutable and reserved'; END $body$;
+CREATE TRIGGER protect_public_ids BEFORE UPDATE OR DELETE ON local_public_ids FOR EACH ROW EXECUTE FUNCTION protect_public_ids();
+REVOKE ALL ON local_public_ids FROM PUBLIC;
+REVOKE ALL ON SEQUENCE local_public_account_seq,local_public_task_seq FROM PUBLIC;
+COMMIT;

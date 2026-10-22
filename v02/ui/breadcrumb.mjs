@@ -1,0 +1,2 @@
+import{formatPageName}from'../identifier-notation.mjs';
+export function breadcrumb(button,page,action){const kind=page.kind==='account'?'account':page.kind==='task'?'task':page.kind==='assigned'?'assigned':'root',node=button(formatPageName(kind,page.title),action);node.className='crumb crumb-'+kind;node.setAttribute('aria-label',(kind==='account'?'Account: ':kind==='task'?'Task: ':kind==='assigned'?'担当ページ: ':'')+page.title);return node;}

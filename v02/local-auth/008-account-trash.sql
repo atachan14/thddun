@@ -1,0 +1,15 @@
+BEGIN;
+SET LOCAL search_path=thdmn_v02_trial,pg_catalog;
+ALTER TABLE local_task_trash ALTER COLUMN root_task_id DROP NOT NULL;
+ALTER TABLE local_task_trash ADD COLUMN root_kind text NOT NULL DEFAULT 'task' CHECK(root_kind IN ('task','account'));
+ALTER TABLE local_task_trash ADD COLUMN root_page_id text;
+ALTER TABLE local_task_trash ADD COLUMN parent_kind text CHECK(parent_kind IN ('root','task','account','group'));
+ALTER TABLE local_task_trash ADD COLUMN parent_id text;
+ALTER TABLE local_task_trash ADD COLUMN account_ids jsonb NOT NULL DEFAULT '[]'::jsonb CHECK(jsonb_typeof(account_ids)='array');
+UPDATE local_task_trash SET root_page_id=root_task_id;
+UPDATE local_task_trash x SET parent_kind=p.parent_kind,parent_id=COALESCE(p.parent_task_id,p.parent_page_id) FROM structure_parents p WHERE p.workspace_id=x.workspace_id AND p.task_id=x.root_task_id;
+ALTER TABLE local_task_trash ALTER COLUMN root_page_id SET NOT NULL;
+CREATE TABLE local_deleted_identities(principal_id text NOT NULL REFERENCES principals(id),workspace_id text NOT NULL,trash_id text NOT NULL,PRIMARY KEY(principal_id,workspace_id,trash_id),FOREIGN KEY(workspace_id,trash_id) REFERENCES local_task_trash(workspace_id,id));
+REVOKE ALL ON local_deleted_identities FROM PUBLIC;
+INSERT INTO structure_migrations(version) VALUES('008-local-account-trash');
+COMMIT;

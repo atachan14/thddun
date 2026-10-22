@@ -1,6 +1,6 @@
 import fs from'node:fs/promises';import{pathToFileURL,fileURLToPath}from'node:url';
 // Offline test engine only. No driver, env DATABASE_URL, socket or credential lookup.
-export async function openTestDatabase(){const modulePath=process.env.THDMN_TEST_PGLITE_MODULE||fileURLToPath(new URL('../../../.local-test-tools/pglite/dist/index.js',import.meta.url));let PGlite;try{({PGlite}=await import(pathToFileURL(modulePath)));}catch{throw Error('Local PGlite test engine missing; see db/README.md. No remote fallback.');}const db=new PGlite();await db.waitReady;return db;}
+export async function openTestDatabase(dataDir){const modulePath=process.env.THDMN_TEST_PGLITE_MODULE||fileURLToPath(new URL('../../../.local-test-tools/pglite/dist/index.js',import.meta.url));let PGlite;try{({PGlite}=await import(pathToFileURL(modulePath)));}catch{throw Error('Local PGlite test engine missing; see db/README.md. No remote fallback.');}const db=new PGlite(dataDir);await db.waitReady;return db;}
 export const sqlFile=name=>fs.readFile(new URL(name,import.meta.url),'utf8');
 export function localPool(db){return{async connect(){return{query:(sql,args=[])=>db.query(sql,args),release(){}};}};}
 export async function legacyFixture(db){await db.exec(await sqlFile('legacy-fixture.sql'));await db.exec(`
