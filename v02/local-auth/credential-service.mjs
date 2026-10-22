@@ -4,12 +4,13 @@ import{assertActiveIdentity}from'./account-lifecycle.mjs';
 import{randomBytes,randomUUID,createHash,timingSafeEqual}from'node:crypto';
 import{hashPassword,verifyPassword}from'./password.mjs';import{transaction}from'../postgres-uow.mjs';import{ApiError}from'../domain-draft.mjs';
 const digest=x=>createHash('sha256').update(x).digest('hex'),nonce=()=>randomBytes(32).toString('base64url');
+let hashing=0; // Process-wide guard across per-request production service instances.
 const token=x=>typeof x==='string'&&/^[A-Za-z0-9_-]{43}$/.test(x);
 function cookie(request,name){const values=(request.headers.get('cookie')||'').split(';').map(v=>v.trim()).filter(v=>v.startsWith(name+'='));return values.length===1?values[0].slice(name.length+1):null;}
 const equal=(a,b)=>token(a)&&token(b)&&timingSafeEqual(Buffer.from(a),Buffer.from(b));
 export function credentialService({pool,origin,workspaceId,allowLoopbackHttp=false}){
  const base=new URL(origin);if(base.origin!==origin||!(base.protocol==='https:'||allowLoopbackHttp&&base.protocol==='http:'&&['127.0.0.1','localhost'].includes(base.hostname)))throw Error('Secure origin required');
- const secure=base.protocol==='https:',sid=secure?'__Host-thdmn_session':'thdmn_local_session',csrfName=secure?'__Host-thdmn_csrf':'thdmn_local_csrf';let hashing=0;
+ const secure=base.protocol==='https:',sid=secure?'__Host-thdmn_session':'thdmn_local_session',csrfName=secure?'__Host-thdmn_csrf':'thdmn_local_csrf';
  const setCookie=(name,value,age)=>name+'='+value+'; Path=/; HttpOnly; SameSite=Strict; Max-Age='+age+(secure?'; Secure':'');
  const json=(status,data,cookies=[])=>{const headers=new Headers({'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});for(const c of cookies)headers.append('Set-Cookie',c);return new Response(JSON.stringify(data),{status,headers});};
  const unit=fn=>transaction(pool,fn);

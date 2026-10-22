@@ -1,6 +1,6 @@
 # Local Account / Task development
 
-This is the local email-free Account application used by the loopback development server. It is **not wired into the existing Vercel production entry**. Do not treat the loopback launcher or local migration helpers as production deployment tooling.
+This is the local email-free Account application used by the loopback development server. The approved production adapter uses the separate /api/app/v1 namespace; existing Google routes stay on the legacy entry. Do not treat the loopback launcher or local migration helpers as production deployment tooling.
 
 ## Settled behavior
 
@@ -12,7 +12,7 @@ This is the local email-free Account application used by the loopback developmen
 - Own Account → Task/child Task and child Account create/edit, fixed ID validation, Policy editing, server-authorized move and recoverable subtree trash/restore. Account deletion revokes logins/sessions; no irreversible purge, recovery operator or identity relinking is provided.
 - Stable field definitions, per-page values/selections and descendant enforcement are separate. Required empty existing pages are readable but create/edit saves block until valid. Inherited requirements cannot be weakened. Moves retain explicit values and recalculate implicit requirements. Official creation date/datetime, last completion and Account-only last login are optional readonly displays; underlying timestamps remain recorded.
 - Parent-owned normal Card coordinates and separate per-Account assignment reference coordinates persist. Assigned layout changes require containing Account manage plus visible/currently assigned source Task, without reparenting or granting Task management.
-- Group features, arbitrary reference creation tools and optional recovery/linking setup remain deferred. Existing Google-only production auth is separate; this local entry does not implement Google login/linking.
+- Group features, arbitrary reference creation tools and optional recovery/linking setup remain deferred. Existing Google-only auth remains on the original root UI; the new production TopPage links there without automatic identity linking.
 
 ## Local verification
 

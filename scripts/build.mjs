@@ -18,7 +18,7 @@ for (const input of Object.keys(demo.metafile.inputs)) {
     throw Error('Private dependency entered public demo: ' + input);
   }
 }
-const top = await build({ ...common, entryPoints: ['v02/ui/top-entry.mjs'], outfile: 'public/top.js', platform: 'browser', format: 'esm', target: 'es2022' });
+const top = await build({ ...common, entryPoints: ['v02/ui/production-entry.mjs'], outfile: 'public/top.js', platform: 'browser', format: 'esm', target: 'es2022' });
 // Offline test artifact. Vercel's Node builder uses the committed api/index.mjs entry.
 const server = await build({ ...common, entryPoints: ['api/index.mjs'],
   outfile: '.build/api.mjs', platform: 'node', format: 'esm', target: 'node24' });

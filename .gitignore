@@ -353,3 +353,10 @@
 *.db
 !/v02/local-auth/creator-management-test.mjs
 !/v02/ui/creator-form-test.mjs
+
+# Reviewed production cookie API and namespace isolation.
+!/v02/local-auth/production-application.mjs
+!/v02/local-auth/production-node-handler.mjs
+!/v02/local-auth/production-test.mjs
+!/v02/ui/production-entry.mjs
+!/v02/local-auth/production-smoke.mjs
