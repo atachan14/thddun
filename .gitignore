@@ -385,3 +385,4 @@
 # Separated policy projection and SQL storage boundaries.
 !/v02/local-auth/policy-snapshot.mjs
 !/v02/local-auth/field-store.mjs
+!/v02/local-auth/field-store-test.mjs
