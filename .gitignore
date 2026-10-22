@@ -371,3 +371,8 @@
 !/v02/samples/seed-transaction.mjs
 !/v02/samples/shared-demo-test.mjs
 !/v02/samples/README.md
+# Shared transport conversion; auth and routing remain caller-owned.
+!/v02/http/
+/v02/http/*
+!/v02/http/node-adapter.mjs
+!/v02/http/node-adapter-test.mjs

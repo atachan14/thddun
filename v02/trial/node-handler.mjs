@@ -1,4 +1,44 @@
-import{Pool,neonConfig}from'@neondatabase/serverless';import{createTrialApplication}from'./application.mjs';import{deploymentHosts}from'./deployment-hosts.mjs';
-neonConfig.webSocketConstructor=globalThis.WebSocket;
-export function trialNodeHandler(env=process.env){const hosts=deploymentHosts(env),application=createTrialApplication({env,openPool:connectionString=>{const pool=new Pool({connectionString,max:2,connectionTimeoutMillis:5000,idleTimeoutMillis:1000});pool.on('error',()=>{});return pool;}});return async(req,res)=>{try{if(!hosts){res.writeHead(503,{'Cache-Control':'no-store'});res.end('Trial host unavailable');return;}const host=req.headers.host;if(typeof host!=='string'||!hosts.has(host)){res.writeHead(403,{'Cache-Control':'no-store'});res.end('Origin not allowed');return;}const method=req.method||'GET',headers=new Headers();for(const[key,value]of Object.entries(req.headers))if(value!==undefined)headers.set(key,Array.isArray(value)?value.join(','):value);const init={method,headers};if(!['GET','HEAD'].includes(method)){let body;if(req.body!==undefined){body=Buffer.isBuffer(req.body)?req.body:Buffer.from(typeof req.body==='string'?req.body:JSON.stringify(req.body));}else{const chunks=[];let size=0;for await(const chunk of req){size+=chunk.length;if(size>32768){res.writeHead(413);res.end('Request too large');return;}chunks.push(chunk);}body=Buffer.concat(chunks);}if(body.length>32768){res.writeHead(413);res.end('Request too large');return;}init.body=body;}const url=new URL(req.url,'https://'+host);if(url.origin!=='https://'+host||url.username||url.password){res.writeHead(403,{'Cache-Control':'no-store'});res.end('Origin not allowed');return;}const response=await application(new Request(url,init));res.writeHead(response.status,Object.fromEntries(response.headers));res.end(await response.text());}catch{res.writeHead(503,{'Cache-Control':'no-store'});res.end('Trial service unavailable');}};}
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { createTrialApplication } from './application.mjs';
+import { deploymentHosts } from './deployment-hosts.mjs';
+import { readNodeRequest, writeFetchResponse } from '../http/node-adapter.mjs';
+
+neonConfig.webSocketConstructor = globalThis.WebSocket;
+
+export function trialNodeHandler(env = process.env) {
+  const hosts = deploymentHosts(env);
+  const application = createTrialApplication({ env, openPool: connectionString => {
+    const pool = new Pool({ connectionString, max: 2, connectionTimeoutMillis: 5000, idleTimeoutMillis: 1000 });
+    pool.on('error', () => {});
+    return pool;
+  }});
+  return async (req, res) => {
+    try {
+      if (!hosts) {
+        res.writeHead(503, { 'Cache-Control': 'no-store' });
+        res.end('Trial host unavailable');
+        return;
+      }
+      const host = req.headers.host;
+      if (typeof host !== 'string' || !hosts.has(host)) {
+        res.writeHead(403, { 'Cache-Control': 'no-store' });
+        res.end('Origin not allowed');
+        return;
+      }
+      // Preserve the legacy envelope rejection order: body limit precedes URL validation.
+      const init = await readNodeRequest(req, res);
+      if (!init) return;
+      const url = new URL(req.url, 'https://' + host);
+      if (url.origin !== 'https://' + host || url.username || url.password) {
+        res.writeHead(403, { 'Cache-Control': 'no-store' });
+        res.end('Origin not allowed');
+        return;
+      }
+      await writeFetchResponse(res, await application(new Request(url, init)));
+    } catch {
+      res.writeHead(503, { 'Cache-Control': 'no-store' });
+      res.end('Trial service unavailable');
+    }
+  };
+}
 export default trialNodeHandler();
