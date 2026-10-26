@@ -82,3 +82,11 @@ await compiled({ headers: { host: 'other.invalid', 'x-forwarded-host': stable },
   method: 'GET', url: '/api/v02/environment' }, spoofResult);
 assert.equal(spoofResult.code, 403);
 console.log('PASS reproducible build twice with outbound networking blocked; sources unchanged, secrets absent, source closure clean, licenses retained, compiled API fails closed.');
+
+// Independently exercise the COMPILED artifact for the renamed project and both production-domain values.
+for(const prefix of ['thdmn','thddun'])for(const domain of ['thdmn.vercel.app','thddun.vercel.app']){
+ const generated=prefix+'-compiled1-aklius14pg-8355s-projects.vercel.app',config={VERCEL:'1',VERCEL_ENV:'production',VERCEL_PROJECT_ID:'prj_52ZvN8FCsa7INgMKSDhh16dMLvyP',VERCEL_URL:generated,VERCEL_PROJECT_PRODUCTION_URL:domain,NEON_AUTH_BASE_URL:'https://auth.example.invalid/db/auth'},built=trialNodeHandler(config);
+ for(const host of [generated,'thdmn.vercel.app','thddun.vercel.app','thdmn-aklius14pg-8355s-projects.vercel.app','thddun-aklius14pg-8355s-projects.vercel.app']){const result=response();await built({headers:{host},method:'GET',url:'/api/v02/environment'},result);assert.equal(result.code,200);}
+ for(const host of ['unrelated.vercel.app',prefix+'-stale1-aklius14pg-8355s-projects.vercel.app',domain+'.evil.invalid']){const result=response();await built({headers:{host,'x-forwarded-host':domain},method:'GET',url:'/api/v02/environment'},result);assert.equal(result.code,403);}
+}
+console.log('PASS compiled old/new host compatibility without broad wildcard hosts or cross-project trust.');

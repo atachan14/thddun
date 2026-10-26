@@ -112,3 +112,9 @@ migration, seed, task-write or permission-change authority.
 Operational records, identity bindings, seed/probe/deployment scripts, SQL drafts,
 images, logs, generated bundles and secrets are excluded by exact source allowlist.
 Review any future allowlist additions deliberately.
+
+## Narrow project-rename host compatibility
+
+The existing project remains prj_52ZvN8FCsa7INgMKSDhh16dMLvyP on the existing team. Code accepts its trusted VERCEL_URL with either thdmn- or thddun- prefix and the same exact team suffix. Production configuration must report exactly thdmn.vercel.app or thddun.vercel.app. Allowed production request hosts are the injected current deployment plus only thdmn.vercel.app, thddun.vercel.app, thdmn-aklius14pg-8355s-projects.vercel.app and thddun-aklius14pg-8355s-projects.vercel.app. Preview trusts its own injected deployment URL only. Foreign/stale deployment URLs, other projects/teams, spoofed forwarding headers and cross-origin requests remain denied.
+
+This compatibility patch does not attach domains, alter Neon/Google trusted origins, create accounts, migrate data or enable unpublished Group/branding changes. Provider origin setup and the actual public-alias transition are separate approved steps. Host acceptance is not user authentication. Existing Google/Bearer routes and password session/CSRF logic are unchanged.

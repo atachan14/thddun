@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { PROJECT_ID, PRODUCTION_HOST, PRODUCTION_DOMAIN, deploymentHosts } from './deployment-hosts.mjs';
+import { PROJECT_ID, PRODUCTION_HOST, PRODUCTION_DOMAIN, PRODUCTION_HOSTS, deploymentHosts } from './deployment-hosts.mjs';
 import { trialNodeHandler } from './node-handler.mjs';
 import { createTrialApplication } from './application.mjs';
 
@@ -17,7 +17,7 @@ const invoke = async (handler, { host = PRODUCTION_HOST, url = '/api/v02/environ
   return response;
 };
 const handler = trialNodeHandler(env);
-assert.deepEqual([...deploymentHosts(env)], [generated, PRODUCTION_HOST, PRODUCTION_DOMAIN]);
+assert.deepEqual([...deploymentHosts(env)], [generated, ...PRODUCTION_HOSTS]);
 for (const host of [generated, PRODUCTION_HOST, PRODUCTION_DOMAIN]) {
   assert.equal((await invoke(handler, { host })).status, 200);
   assert.equal((await invoke(handler, { host, url: '/api/v02/snapshot?workspace=demo' })).status, 401);
@@ -67,7 +67,7 @@ assert.equal(deploymentHosts({ VERCEL_URL: generated }), null);
 // Independent Fetch application boundary has the same exact-host and Origin rules.
 let opens = 0;
 const app = createTrialApplication({ env, openPool() { opens++; throw Error('No DB permitted'); } });
-for (const host of [PRODUCTION_HOST, PRODUCTION_DOMAIN, generated]) {
+for (const host of [...PRODUCTION_HOSTS, generated]) {
   assert.equal((await app(new Request('https://' + host + '/api/v02/environment'))).status, 200);
   assert.equal((await app(new Request('https://' + host + '/api/v02/snapshot?workspace=demo'))).status, 401);
 }
@@ -79,3 +79,18 @@ assert.equal((await app(new Request('https://' + PRODUCTION_HOST + '/api/v02/env
   { headers: { origin: 'https://' + generated, 'x-forwarded-host': PRODUCTION_HOST } }))).status, 403);
 assert.equal(opens, 0);
 console.log('PASS exact existing Production alias + current deployment only; project/config fail-closed, stale/foreign Host and Origin denied, forwarded/absolute-target spoofing denied, Preview cannot claim Production alias, anonymous remains 401. Synthetic config; no DB/network.');
+
+// The same immutable project supports old/new deployment prefixes and exact stable aliases.
+for(const prefix of ['thdmn','thddun'])for(const productionDomain of ['thdmn.vercel.app','thddun.vercel.app']){
+ const current=prefix+'-hostcompat1-aklius14pg-8355s-projects.vercel.app',config={...env,VERCEL_URL:current,VERCEL_PROJECT_PRODUCTION_URL:productionDomain},compatible=trialNodeHandler(config);
+ assert.deepEqual([...deploymentHosts(config)],[current,...PRODUCTION_HOSTS]);
+ for(const host of [current,...PRODUCTION_HOSTS])assert.equal((await invoke(compatible,{host})).status,200);
+ for(const host of ['thddun-stale1-aklius14pg-8355s-projects.vercel.app','thdmn-stale1-aklius14pg-8355s-projects.vercel.app','thddun.vercel.app.evil.invalid','unrelated.vercel.app'])assert.equal((await invoke(compatible,{host,headers:{'x-forwarded-host':productionDomain}})).status,403);
+ assert.equal((await invoke(compatible,{host:current,headers:{origin:'https://'+PRODUCTION_DOMAIN}})).status,403);
+ assert.equal(deploymentHosts({...config,VERCEL_PROJECT_ID:'prj_other'}),null);
+ assert.equal(deploymentHosts({...config,VERCEL_URL:'thddun-hostcompat1-other-team.vercel.app'}),null);
+ assert.equal(deploymentHosts({...config,VERCEL_PROJECT_PRODUCTION_URL:'other.vercel.app'}),null);
+ const isolatedPreview=trialNodeHandler({...config,VERCEL_ENV:'preview'});
+ assert.equal((await invoke(isolatedPreview,{host:current})).status,200);for(const host of PRODUCTION_HOSTS)assert.equal((await invoke(isolatedPreview,{host})).status,403);
+}
+console.log('PASS narrow old/new generated prefix and four exact production aliases, same immutable project/team, Preview isolation and stale/foreign/cross-origin spoof denial. No provider setting changes.');
