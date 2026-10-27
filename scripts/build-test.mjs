@@ -42,13 +42,12 @@ const inputs = JSON.parse(await fs.readFile(path.join(root, '.build/inputs.json'
 for(const files of [inputs.browser,inputs.top,inputs.demo,inputs.server])assert(!files.some(file=>file.includes('.local-test-tools/')));
 assert(!inputs.browser.some(file => /app\.mjs|file-client|ledger|fixture|fake-postgres/.test(file)));
 assert(!inputs.server.some(file => /fixture|fake-postgres|seed|prepare|manifest/.test(file)));
-assert(inputs.demo.length > 0);
-assert(!inputs.demo.some(file => /auth|trial|structure\/db|fixture|postgres/.test(file)));
-const demoJS = await fs.readFile(path.join(root, 'public/demo.js'), 'utf8');
-for (const marker of ['thdmn_v02_trial', 'qa-v02-write-parent', '1706f733', 'DATABASE_URL', 'NEON_AUTH', '/api/v02', 'fetch(']) assert(!demoJS.includes(marker), marker);
+assert.deepEqual(inputs.demo, []);
+for(const file of ['demo.html','demo.css','demo.js']) assert(!inputs.publicFiles.includes(file));
+assert(![...inputs.browser,...inputs.top,...inputs.server].some(file=>file.includes('v02/public-demo/')));
 const config = JSON.parse(await fs.readFile(path.join(root, 'vercel.json'), 'utf8'));
-assert(config.headers.find(rule => rule.source === '/demo.html').headers.some(header => header.key === 'Content-Security-Policy' && header.value.includes("connect-src 'none'")));
-assert(inputs.publicFiles.includes('demo.html') && inputs.publicFiles.includes('demo.css') && inputs.publicFiles.includes('demo.js'));
+assert(config.redirects.some(rule=>rule.source==='/demo.html'&&rule.destination==='/top.html'&&rule.permanent===false));
+for(const file of ['index.html','top.html']) assert(!(await fs.readFile(path.join(root,'public',file),'utf8')).includes('href="/demo.html"'));
 const html = await fs.readFile(path.join(root, 'public/index.html'), 'utf8');
 assert(html.includes('src="/shell.js"') && !html.includes('src="/app-entry.mjs"'));
 for (const directory of ['public', '.build']) {

@@ -11,18 +11,11 @@ const common = { absWorkingDir: root, bundle: true, minify: true, sourcemap: fal
   legalComments: 'external', metafile: true, write: false, logLevel: 'silent' };
 const browser = await build({ ...common, entryPoints: ['v02/ui/shell-entry.mjs'],
   outfile: 'public/shell.js', platform: 'browser', format: 'esm', target: 'es2022' });
-const demo = await build({ ...common, entryPoints: ['v02/public-demo/browser.mjs'],
-  outfile: 'public/demo.js', platform: 'browser', format: 'esm', target: 'es2022' });
-for (const input of Object.keys(demo.metafile.inputs)) {
-  if (/v02\/(?:auth|trial|structure\/db)\/|(?:fixture|postgres|fake-postgres)/.test(input)) {
-    throw Error('Private dependency entered public demo: ' + input);
-  }
-}
 const top = await build({ ...common, entryPoints: ['v02/ui/production-entry.mjs'], outfile: 'public/top.js', platform: 'browser', format: 'esm', target: 'es2022' });
 // Offline test artifact. Vercel's Node builder uses the committed api/index.mjs entry.
 const server = await build({ ...common, entryPoints: ['api/index.mjs'],
   outfile: '.build/api.mjs', platform: 'node', format: 'esm', target: 'node24' });
-const inputs = Object.keys({ ...browser.metafile.inputs, ...demo.metafile.inputs, ...top.metafile.inputs, ...server.metafile.inputs });
+const inputs = Object.keys({ ...browser.metafile.inputs, ...top.metafile.inputs, ...server.metafile.inputs });
 for (const input of inputs.filter(input => !input.includes('node_modules'))) {
   if (/(?:^|\/)(?:runtime|samples)(?:\/|$)|(?:fixture|fake-postgres|test|prepare|manifest)\./.test(input)) {
     throw Error('Non-runtime source entered a deployment bundle: ' + input);
@@ -64,15 +57,15 @@ const artifacts = new Map([
   ['top.html', normalizeText(await fs.readFile(path.join(root, 'v02/ui/top.html'), 'utf8'))],
   ['top-v01.css', normalizeText(await fs.readFile(path.join(root, 'v02/ui/top-v01.css'), 'utf8'))],
   ['top.css', normalizeText(await fs.readFile(path.join(root, 'v02/ui/top.css'), 'utf8'))],
-  ['demo.html', normalizeText(await fs.readFile(path.join(root, 'v02/public-demo/index.html'), 'utf8'))],
-  ['demo.css', normalizeText(await fs.readFile(path.join(root, 'v02/public-demo/demo.css'), 'utf8'))],
   ['index.html', html.replace('src="/app-entry.mjs"', 'src="/shell.js"')],
   ['THIRD_PARTY_NOTICES.json', JSON.stringify([...packages.values()].sort((a, b) => a.name.localeCompare(b.name)), null, 2) + '\n']
 ]);
 for (const file of ['style.css', 'simple.css', 'menu-pane.css', 'site-layout.css']) {
   artifacts.set(file, normalizeText(await fs.readFile(path.join(root, file), 'utf8')));
 }
-for (const file of [...browser.outputFiles, ...demo.outputFiles, ...top.outputFiles]) artifacts.set(path.basename(file.path), file.contents);
+for (const file of [...browser.outputFiles, ...top.outputFiles]) artifacts.set(path.basename(file.path), file.contents);
+// Retire only known generated cafe assets from earlier builds, never source or data.
+for (const file of ['demo.html', 'demo.css', 'demo.js', 'demo.js.LEGAL.txt']) await fs.rm(path.join(output, file), { force: true });
 const allowed = [...artifacts.keys()].sort();
 for (const existing of await fs.readdir(output)) {
   if (!allowed.includes(existing)) throw Error('Unexpected stale public artifact: ' + existing);
@@ -82,7 +75,7 @@ for (const file of server.outputFiles) await fs.writeFile(path.join(reviewOutput
 await fs.writeFile(path.join(reviewOutput, 'inputs.json'), JSON.stringify({
   browser: Object.keys(browser.metafile.inputs).filter(p => !p.includes('node_modules')),
   top: Object.keys(top.metafile.inputs).filter(p => !p.includes('node_modules')),
-  demo: Object.keys(demo.metafile.inputs).filter(p => !p.includes('node_modules')),
+  demo: [],
   server: Object.keys(server.metafile.inputs).filter(p => !p.includes('node_modules')),
   publicFiles: allowed, licenses: [...packages.values()].map(({ name, version, license }) => ({ name, version, license }))
 }, null, 2) + '\n');
