@@ -360,3 +360,14 @@
 !/v02/local-auth/production-test.mjs
 !/v02/ui/production-entry.mjs
 !/v02/local-auth/production-smoke.mjs
+
+# Reviewed shared-demo runtime and offline seed sources.
+!/v02/local-auth/demo-*.mjs
+!/v02/samples/
+/v02/samples/*
+!/v02/samples/enterprise-blueprint.mjs
+!/v02/samples/enterprise-seed.mjs
+!/v02/samples/public-demo-seed.mjs
+!/v02/samples/seed-transaction.mjs
+!/v02/samples/shared-demo-test.mjs
+!/v02/samples/README.md
