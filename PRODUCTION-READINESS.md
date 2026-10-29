@@ -1,3 +1,5 @@
+> Current handoff: [docs/README.md](docs/README.md). The sections below retain stage-specific rollout/review history; use docs/STATUS.md and actual Git/deployment SHA for present status.
+
 # Production password API rollout
 
 The cookie-based ID/password application uses /top.html and the isolated /api/app/v1 namespace. Its fixed workspace is demo in thdmn_v02_trial. Existing Google/Bearer routes and the original root UI remain on the legacy application. No legacy Tasks, Group pages, Tier/Policy values or provider identities are converted automatically. The Google alternative in the new UI opens the existing root login experience; it does not claim to link an existing Google identity to a new password Account.

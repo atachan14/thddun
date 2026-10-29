@@ -386,3 +386,8 @@
 !/v02/local-auth/policy-snapshot.mjs
 !/v02/local-auth/field-store.mjs
 !/v02/local-auth/field-store-test.mjs
+
+# Current AI handoff documentation.
+!/AGENTS.md
+!/docs/
+!/docs/*.md

@@ -1,3 +1,5 @@
+> Current handoff: [docs/README.md](docs/README.md). The sections below retain stage-specific rollout/review history; use docs/STATUS.md and actual Git/deployment SHA for present status.
+
 # Protected main-only verification deployment
 
 Use one existing Vercel project, its protected Production deployment and existing
