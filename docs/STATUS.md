@@ -1,5 +1,7 @@
 # 統合状況・保留・旧作業場所
 
+2026-10-29更新: 正式checkoutで保守改善3件とdocsを統合。全88テスト・buildが成功し、保守版39b3466のmain push、Vercel success/READY、本番alias反映を確認しました。本番の読み取りsmokeのみ実施し、DBや認証設定は変更していません。
+
 整理開始時の公開基準は `47704a3`。公開共有サンプルはREADYとalias割当、公開API58チェックで確認済みです。Manager/Staffの実画面と固定Accountのdisabled、共有警告を確認しましたが、ブラウザのnative確認ダイアログ制御でtimeoutし、そのブラウザ側の取消/退出完了は未確認でした。API検証sessionは全てsign-out済み。これを完全なブラウザQA/セキュリティ監査と呼ばないでください。
 
 ## 未反映成果の分類

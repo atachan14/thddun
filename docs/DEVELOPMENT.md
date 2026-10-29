@@ -40,7 +40,7 @@ Buildは `public/` と `.build/`のみを生成し、DB接続・seed・認証設
 
 ## 公開とDB
 
-既存GitHub mainへのpushはVercel project `thddun` の本番自動deployを起動します。`review/workspace-handoff`等のreview branchは本番mainの置換ではありません。push前にremote差分・公開範囲・CI/previewの影響を確認してください。今回の整理では本番main反映を確認待ちにし、明示deploy/promoteは行いません。
+既存GitHub mainへのpushはVercel project `thddun` の本番自動deployを起動します。`review/workspace-handoff`等のreview branchは本番mainの置換ではありません。push前にremote差分・公開範囲・CI/previewの影響を確認してください。この整理の保守改善3件とdocsは2026-10-29にmain pushと本番自動deployまで承認されました。手動deploy/promoteは行っていません。今後の変更も、その公開範囲を確認してからpushします。
 
 公開反映時は対象SHAのREADY、alias `thddun.vercel.app`のdeployment ID、HTTPとAPIを照合します。短縮aliasが旧deploymentを指し続けた実績があるため、READYだけで反映済みと判断しないでください。旧 `thdmn.vercel.app` は削除済みで再作成しません。
 
