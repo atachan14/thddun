@@ -14,7 +14,7 @@ Task の親子階層、前提関係(先に終わらせる Task)、担当者ご�
 ## 以前の試作
 - コード: タグ `prototype-v02`(作り直し前の最後の `main`)。例: `git show prototype-v02:v02/ui/canvas-shell.mjs`
 - docs: [archive/20261106/](archive/20261106/)。当時の仕様は `SPEC.md`、公開状況は `STATUS.md`。
-- 画面: `archive/20261106/screenshots/` に、2026-11-06 に撮った公開版の共有サンプルの画面がある。このPCにだけあり、Git では管理しない(`.gitignore` で画像は公開しないため)。
+- 画面: [archive/20261106/screenshots/](archive/20261106/screenshots/)(2026-11-06 に公開版の共有サンプルを撮影)
 - 残す仕様は、ここの docs に書き直してから使う。
 
-状況は [STATUS.md](STATUS.md)。
+要件は [REQUIREMENTS.md](REQUIREMENTS.md)(下書き)、状況は [STATUS.md](STATUS.md)。
