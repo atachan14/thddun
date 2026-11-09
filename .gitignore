@@ -15,6 +15,3 @@ node_modules/
 *.sqlite*
 *.db
 *.log
-
-# 以前の試作の検証用ツールと記録(このPCだけ)
-/.local-test-tools/
