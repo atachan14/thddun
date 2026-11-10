@@ -1,0 +1,14 @@
+{
+  "name": "thddun",
+  "private": true,
+  "type": "module",
+  "description": "フォルダの中の Topic(Markdown)を読み込み、親子と前提の構造を見せるツール",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node local/server.js",
+    "workspace": "node local/cli.js",
+    "test": "node --test"
+  }
+}
